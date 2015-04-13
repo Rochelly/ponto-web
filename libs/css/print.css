@@ -1,0 +1,54 @@
+#mes, #ano {
+    display: none;
+}
+
+* {
+    font-size: 10px;
+}
+
+.table th {
+    font-size: 0.93em;
+}
+
+/*
+.table {
+    border: none;
+}
+
+.table th, .table td {
+    border-bottom: solid 1px red;
+}
+
+.panel {
+    border: solid 1px red;
+}
+*/
+
+#dadosServidor div {
+    float: left;
+    min-width: 25%;
+    margin-left: 3%;
+}
+
+.table tbody tr td {
+    padding: 3px;
+}
+
+#legendas * {
+    margin-top: 7px;
+    padding: 3px;
+    margin-bottom: 0px;
+}
+
+#assinaturas {
+    display: block;
+    text-align: center;
+}
+
+#assinaturas span {
+    width: 40%;
+    border-top: solid 1px black;
+    display: inline-block;
+    margin: 1em 3em;
+    text-transform: capitalize;
+}

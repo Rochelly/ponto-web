@@ -1,0 +1,40 @@
+h2 {
+    font-size: 1.4em;
+}
+
+.folga {
+	font-style: italic;
+}
+
+.saldo.pos {
+	color: #009;
+}
+
+.saldo.neg {
+	color: #900;
+}
+
+#dadosServidor span {
+    font-weight: bold;
+}
+
+#legendas {
+    padding: 16px;
+}
+
+#legendas dt {
+    float: left;
+    margin-right: 3px;
+}
+
+#legendas dt:after {
+    content: ":";
+}
+
+#assinaturas {
+    display: none;
+}
+
+#msg {
+    height: 16px;
+}
