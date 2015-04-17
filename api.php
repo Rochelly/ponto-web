@@ -12,7 +12,7 @@ function __autoload($c) {
         './model/',
         './dao/ponto/',
         './view/'
-    );
+        );
 
     foreach ($paths as $dir) {
         if (file_exists($dir . $c . '.php')) {
