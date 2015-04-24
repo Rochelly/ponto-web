@@ -29,6 +29,8 @@ class Ponto {
 	//var_dump($uri, json_decode(file_get_contents($uri)), $data, json_decode($data));
 
         $json = json_decode($data);
+
+        
         return $json;
     }
 

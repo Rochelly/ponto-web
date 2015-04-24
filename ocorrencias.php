@@ -1,5 +1,6 @@
 <?php
 session_start();
+echo "<center><h1>Pagina de chefia/ Ocorrencias </h1></center>";
 if (!array_key_exists('siape', $_SESSION)) {
     header('location: /ponto/login.php');
     exit;
@@ -21,18 +22,18 @@ function __autoload($c) {
     }
 }
 
-$ponto = new Ponto;
 $siape = $_SESSION['siape'];
 $usuario = $_SESSION['usuario'];
 $chefia= $_SESSION['chefia'];
-
-if($chefia!=0){
-    header('location: /ponto/chefia.php');
+$ponto= new Ponto;
+if($chefia==0){
+    header('location: /ponto/index.php');
     exit;
 }
 
 
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -56,20 +57,18 @@ if($chefia!=0){
           <div class="row">
             <div class="col-md-2"></div>
             <div class="col-md-8">
-                <nav class="navbar navbar-default">
+                <nav class="navbar navbar-inverse  role='navigation">
                     <div class="navbar-header">
                         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
                             <span class="sr-only">menu</span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
+
                         </button>
-                        <a class="navbar-brand" href="#">Marcações</a>
+                        <a class="navbar-brand" href="chefia.php">Minhas Marcaçoes</a>
                     </div>
                     <div class="navbar-collapse collapse">
-                        <div class="col-md-9">
+                        <div align="center" class="col-md-9">
                             <ul class="nav navbar-nav">
-                                <li><a href="#">Buscar</a></li>
+                                <li><a href="ocorrencias.php">Ocorrencias de Funcionarios</a></li>
                                 <li><a href="#about">Ajuda</a></li>
                             </ul>
                         </div>
@@ -123,7 +122,6 @@ if($chefia!=0){
             </div>
             <!-- Select Ano Fim -->
         </div>
-
         <div class="row">
             <div class="col-md-3"></div>
             <div class="col-md-6">
@@ -131,69 +129,72 @@ if($chefia!=0){
                     <div class="panel-heading">
                         <?php
                         $servidor = $ponto->servidor($siape);
-                     //   var_dump($servidor);
 
-                        echo "Servidor: <label>{$servidor->nome}</label>";
+                        $chefiaDados= $ponto->chefiaDados($usuario);
 
+//                        var_dump($chefiaDados);
+
+
+                        echo "Nome:         <label>{$_SESSION['usuarioNome']}</label>";
                         echo "<br>";
-                        echo "SIAPE: <label>{$servidor->siape}</label>";
-                        echo "<br>";
-                        echo "Departamento: <label>{$servidor->descricao}</label>";
+                        echo "Departamento: <label>{$chefiaDados->descricao}</label>";
                         ?>
                     </div>
                     <div id="dadosServidor" class="panel-body">
                         <?php
                         $sumario = $ponto->sumario($siape, $mes, $ano_selecionado);
                    //     var_dump($sumario);
+
                         $update = $ponto->ultima_atualizacao();
-                        echo "<div>Período: <span id='periodo'>{$sumario->periodo}</span></div>";
-                        echo "<div>Carga Horária: <span id='carga_horaria'>{$sumario->carga_horaria}</span></div>";
-                        echo "<div>Horas Trabalhadas: <span id='horas_trabalhadas'>{$sumario->horas_trabalhadas}</span></div>";
-                        echo "<div>Extras/Atraso: <span id='saldo'>{$sumario->saldo}</span></div>";
-                        echo "<div>Ultima Atualizacao: <span id='saldo'>{$update}</span></div>";
+                        echo "Período: <span id='periodo'>{$sumario->periodo}</span>";
+                    echo "</br>";
+                        echo "Ultima Atualizacao: <span id='update'>{$update}</span>";
                         ?>
                     </div>
-                    <table class="table table-striped" id="marcacao" name="marcacao">
-                        <thead>
-                            <th width="140px">Data</th>
-                            <th width="80px">Entrada</th>
+                  </div>
 
-                            <th width="120px">Saída</th>
 
-                            <th width="80px">Entrada</th>
 
-                            <th width="120px">Saída</th>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+              <div align="right">
+                <button align="right" id='imprimir' name='imprimir' class="btn btn-info">Imprimir Relatorio</button>        
+              </div>
+          
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                <center>
+                               BOLETIM DE FREQUENCIA
 
-                            <th width="120px">Horas Trabalhadas</th>
-                            <th>Saldo</th>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+                  </center>
+              </a>
 
-                    <?php
-                    $legendas = $ponto->legendas($siape, $mes, $ano_selecionado);
-                   var_dump($legendas);
-                    if (count($legendas)) {
-                        echo "<h2>Legendas</h2>";
-                        echo "<dl class='panel-body'>\n";
-                        foreach ($legendas as $legenda) {
-                            echo "  <dt>{$legenda->nome}</dt>\n";
-                            echo "  <dd>{$legenda->descricao}</dd>\n";
-                        }
-                        echo "</dl>\n";
-                    }
-                    ?>
+          </h4>
+      </div>
+      <div id="collapseOne" class="panel-collapse collapse in">
+          <div class="panel-body">
 
-                </div>
-                <div id="assinaturas">
-                    <span><?php echo "{$servidor->nome} ({$siape})"; ?></span>
-                    <span>Chefia Imediata</span>
-                </div>
+                            <table class="table table-striped" id="marcacao" name="marcacao">
+                                <thead>
+                                    <th width="80px">SIAPE</th>
+                                    <th width="300px">SERVIDOR</th>
+                                    <th width="120px">OCORRENCIA</th>
+                                    <th width="80px">QUANTIDADE</th>
+                             </thead>
+                    <!--         <tbody>
+                                 </tbody>
+ -->
             </div>
         </div>
-    </form>
+    </div>
+</table>
 </div>
-
+<div id="assinaturas">
+    <span><?php echo "{$_SESSION['usuarioNome']} ({$siape}) </br> Encarregado da  Frequencia"; ?></span>
+</div>
+</div>
+</div>
+</form>
+</div>
 </body>
 </html>

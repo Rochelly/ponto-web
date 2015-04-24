@@ -3,6 +3,7 @@ function atualiza(e) {
     var ano = $('#ano').val();
     var feriado = 0;
 
+
     $.get('/ponto/api.php/legendas?mes=' + mes + '&ano=' + ano, function (data, status) {
         var leg = $("#legendas");
         $("#legendas").text('');
@@ -29,6 +30,8 @@ function atualiza(e) {
     });
 
     $.get('/ponto/api.php/pontos?mes=' + mes + '&ano=' + ano, function (data, status) {
+
+     
         var tbody = $('#marcacao tbody');
         tbody.html('');
 
@@ -39,7 +42,7 @@ function atualiza(e) {
         for (dia = 1, i = 0; dia <= lastDay; dia++) {
             var str_mes = (mes < 10) ? "0" + mes : mes;
             var str_dia = (dia < 10) ? '0' + dia : dia.toString();
-            var datames = str_dia + "/" + str_mes + "/" + ano;
+            var datames = str_dia + "/" + str_mes + "/" + ano;;
             if (i < data.length && data[i].bdata == datames) {
                 var tr = $('<tr>');
                 var texto = '--:--';
@@ -88,19 +91,36 @@ function atualiza(e) {
             tr.append($('<td>', {html: texto}));
             tr.append($('<td>', {html: texto}));
             tr.append($('<td>', {html: texto}));
-            tr.append($('<td>', {html: texto}));
             tr.append($('<td>', {html: texto2}));
-        
-           
+            tr.append($('<td>', {html: texto2}));
+      
             tbody.append(tr);
         }
-    }
-});
+        }
+    });
     //e.preventDefault();
+
+    
+    
 }
+
+
 
 $(document).ready(function () {
     $('#mes').click(atualiza);
     atualiza();
 
 });
+
+
+
+
+
+//--------------------------------------------------------------------------------------
+$('.collapse').on('shown.bs.collapse', function(){
+$(this).parent().find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus");
+}).on('hidden.bs.collapse', function(){
+$(this).parent().find(".glyphicon-minus").removeClass("glyphicon-minus").addClass("glyphicon-plus");
+});
+
+   
