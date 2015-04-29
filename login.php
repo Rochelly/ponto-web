@@ -9,8 +9,8 @@ $usuario = '';
 $msg = '';
    
 if (array_key_exists('login', $_POST)) {
-  //  $usuario = $_POST['login'];
-   $usuario='arfonseca';
+ $usuario = $_POST['login'];
+
     $conn = new Ldap();
     $result = $conn->search($base_dn, "uid={$_POST['login']}", array('cn', 'employeeNumber'));
 
@@ -25,6 +25,7 @@ if (array_key_exists('login', $_POST)) {
         $_SESSION['usuario']=$usuario;
         $ponto = new Ponto;
         $chefia = $ponto->chefia($usuario);
+        
         $CHEFIA= $chefia->chefia;
         $_SESSION['chefia']=$CHEFIA;
         header('location: /ponto/index.php');

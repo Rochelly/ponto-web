@@ -172,7 +172,7 @@ if($chefia!=0){
                     </table>
 
                     <?php
-                    $legendas = $ponto->legendas($siape, $mes, $ano_selecionado);
+               $legendas = $ponto->legendas($siape, $mes, $ano_selecionado);
                    var_dump($legendas);
                     if (count($legendas)) {
                         echo "<h2>Legendas</h2>";

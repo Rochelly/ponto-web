@@ -1,6 +1,6 @@
 <?php
 session_start();
-echo "<center><h1>Pagina de chefia/Marcaçoes</h1></center>";
+
 if (!array_key_exists('siape', $_SESSION)) {
     header('location: /ponto/login.php');
     exit;
@@ -63,23 +63,19 @@ if($chefia==0){
                             <span class="sr-only">menu</span>
 
                         </button>
-                        <a class="navbar-brand" href="chefia.php">Minhas Marcaçoes</a>
+                        <a class="navbar-brand" href="chefia.php">Minhas Marcaçes</a>
+                        <a class="navbar-brand" href="ocorrencias.php">Ocorrencias de Funcionarios</a>
+                        <a class="navbar-brand" href="#about">Ajuda</a>
                     </div>
-                    <div class="navbar-collapse collapse">
-                        <div align="center" class="col-md-9">
-                            <ul class="nav navbar-nav">
-                                <li><a href="ocorrencias.php">Ocorrencias de Funcionarios</a></li>
-                                <li><a href="#about">Ajuda</a></li>
-                            </ul>
-                        </div>
+                
                         <div class="col-md-1 navbar-right" align="left">
                             <ul align="center" class="nav navbar-nav">
                                 <li align="center"><a id="sair" name="sair" href="/ponto/logout.php">Sair</a></li>
                             </ul>
                         </div>
-
+ </nav>
                     </div>
-                </nav>
+               
             </div>
         </div>
         <!-- Menu Fim -->
