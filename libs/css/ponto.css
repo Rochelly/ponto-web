@@ -1,5 +1,5 @@
 h2 {
-    font-size: 1.4em;
+  font-size: 1.4em;
 }
 
 hr {
@@ -18,8 +18,16 @@ hr {
 	font-style: italic;
 }
 
+
+tr.hoje {
+  font-style: italic;
+  font-weight: bold;
+  background:#58D3F7;
+}
+
+
 .local.dif{
-    color: #FFA500;
+  color: #FFA500;
 }
 
 .saldo.pos {
@@ -31,24 +39,24 @@ hr {
 }
 
 #dadosServidor span {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 #legendas {
-    padding: 16px;
+  padding: 16px;
 }
 
 #legendas dt {
-    float: left;
-    margin-right: 3px;
+  float: left;
+  margin-right: 3px;
 }
 
 #legendas dt:after {
-    content: ":";
+  content: ":";
 }
 
 #assinaturas {
-    display: none;
+  display: none;
 }
 
 #imagens {
@@ -56,6 +64,6 @@ hr {
 }
 
 #msg {
-    height: 16px;
+  height: 16px;
 }
 
