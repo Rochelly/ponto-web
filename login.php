@@ -1,39 +1,39 @@
 <?php
-require_once('dao/ldap/Ldap.php');
-require_once ('dao/ponto/Ponto.php');
-session_start();
+    require_once('dao/ldap/Ldap.php');
+    require_once ('dao/ponto/Ponto.php');
+    session_start();
 
-$base_dn = 'dc=ufvjm,dc=edu,dc=br';
-$usuario = '';
+    $base_dn = 'dc=ufvjm,dc=edu,dc=br';
+    $usuario = '';
+    $msg = '';
 
-$msg = '';
+    if (array_key_exists('login', $_POST)) {
+         $usuario = $_POST['login'];
+         $conn = new Ldap();
+         $result = $conn->search($base_dn, "uid={$_POST['login']}", array('cn', 'employeeNumber'));
 
+         $entry = $result->first();
+         $user_dn = $result->entry_dn();
+         $user_pw = $_POST['senha'];
 
+         if ($conn->bind($user_dn, $user_pw)) {
 
-if (array_key_exists('login', $_POST)) {
-   $usuario = $_POST['login'];
-   $conn = new Ldap();
-   $result = $conn->search($base_dn, "uid={$_POST['login']}", array('cn', 'employeeNumber'));
+            $_SESSION['usuarioNome'] = $entry['cn'][0];
+            $_SESSION['siape'] = $entry['employeeNumber'][0];
+         //   $_SESSION['siape'] ="2156777";
+            $_SESSION['usuario']=$usuario;
 
-   $entry = $result->first();
-   $user_dn = $result->entry_dn();
-   $user_pw = $_POST['senha'];
+            $ponto = new Ponto;
+            $chefia = $ponto->chefia($usuario);
+            $CHEFIA= $chefia->chefia;
 
-   if ($conn->bind($user_dn, $user_pw)) {
+            $_SESSION['chefia']=$CHEFIA;
 
-    $_SESSION['usuarioNome'] = $entry['cn'][0];
-    $_SESSION['siape'] = $entry['employeeNumber'][0];
-    $_SESSION['usuario']=$usuario;
-    $ponto = new Ponto;
-    $chefia = $ponto->chefia($usuario);
-
-    $CHEFIA= $chefia->chefia;
-    $_SESSION['chefia']=$CHEFIA;
-    header('location: /ponto/index.php');
-} else {
-    $msg = 'Usuario ou senha inválido!';
-}
-}
+            header('location: /ponto/index.php');
+        } else {
+            $msg = 'Usuario ou senha inválido!';
+        }
+    }
 
 
 

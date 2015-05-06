@@ -198,14 +198,20 @@ if($chefia==0){
 					<?php
 					echo"<div class='panel panel-default'>";
 /**
- * [$funcionarios description]
+ * [$funcionarios  retorna  o SIAPE de todos os  funcionarios) de um departamento]
  * @var [type]
  * 	@var [type] [description]
  */
 $funcionarios = $ponto->funcionariosDep($departamentoId);
 $diasMes = cal_days_in_month(CAL_GREGORIAN, $mes, $ano_selecionado);
 
+
+/**
+ * [$j   funcionarios de  um setor]
+ * @var integer
+ */
 for ($j=0; $j <count($funcionarios) ; $j++) {
+
 
 	$ocorrencias = $ponto->ocorrencias($mes,$ano_selecionado,$departamentoId,$funcionarios[$j]->n_folha);
 
@@ -217,7 +223,13 @@ for ($j=0; $j <count($funcionarios) ; $j++) {
 	echo"	</table>  ";
 
 
-
+/**
+ *  Caso o  funcionario  apresente  ocorrencias, elas serao  listas
+ *  caso  contrario,  sera exibido  apenas os saldo  de dias, ex:
+ *
+ * Efetivo :25
+ * Faltas:  5
+ */
 	if (count($ocorrencias)>0)
 	{
 
@@ -241,7 +253,7 @@ for ($j=0; $j <count($funcionarios) ; $j++) {
 				echo" <td width='150px'>{$ocorrencias[$i]->quantidade}</th>";
 				echo" <td width='80px'>";
 								/**
-								 * [$dias description]
+								 * [$dias dias em  que ocorreram as ocorrencias]
 								 * @var [type]
 								 *
 								 */
@@ -257,6 +269,10 @@ for ($j=0; $j <count($funcionarios) ; $j++) {
 								echo "</tr>";
 							}
 
+							/**
+							 * [$saldoDias  quantidade de dias trabalhados e  nao trabalhados por  mes]
+							 * @var [array de objetos]
+							 */
 							$saldoDias=$ponto->diasTrabalhados($mes,$ano_selecionado,$departamentoId,$funcionarios[$j]->n_folha);
 
 							echo "</tbody>";

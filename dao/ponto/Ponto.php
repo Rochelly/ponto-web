@@ -12,6 +12,9 @@ class Ponto {
             $uri = Config::get('api_uri') . '/' . $method;
 
         $response = json_decode(file_get_contents($uri));
+
+
+
         $result = $response->result;
         $data = pack('H*', $result);
 
@@ -21,18 +24,22 @@ class Ponto {
         $data = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $key, $data, MCRYPT_MODE_CBC, $iv);
 
 
+
         $pos_a = strrpos($data, '}');
         $pos_b = strrpos($data, ']');
         $len = ($pos_a > $pos_b) ? ++$pos_a : ++$pos_b;
         $data = substr($data, 0, $len);
 
+
 	//var_dump($uri, json_decode(file_get_contents($uri)), $data, json_decode($data));
 
         $json = json_decode($data);
 
+
         
         return $json;
     }
+
 
     public function __call($name, $args) {
         return $this->request($name, $args);
@@ -41,4 +48,9 @@ class Ponto {
     public function ultima_atualizacao() {
         return $this->request('ultima_atualizacao')->ultima_atualizacao;
     }
+
+    public function feriados($siape, $mes, $ano) {
+        return $this->request('feriados', array($mes, $ano));
+    }
+
 }

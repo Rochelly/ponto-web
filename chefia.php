@@ -26,6 +26,7 @@ $siape = $_SESSION['siape'];
 $usuario = $_SESSION['usuario'];
 $chefia= $_SESSION['chefia'];
 $ponto= new Ponto;
+
 if($chefia==0){
     header('location: /ponto/index.php');
     exit;
@@ -85,7 +86,7 @@ if($chefia==0){
                 <?php
                 $meses = array('', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro');
                 $mes = array_key_exists('mes', $_GET) ? $_GET['mes'] : date('n');
-                var_dump($mes);
+
                 for ($i = 1; $i < 13; $i++) {
                     if ($i == $mes)
                         echo "<option value='{$i}' selected='selected'>{$meses[$i]}</option>";
@@ -122,20 +123,19 @@ if($chefia==0){
             <div class="panel panel-default" id="tabela" >
                 <div class="panel-heading">
                     <?php
-                    $servidor = $ponto->servidor($siape);
-                     //   var_dump($servidor);
 
+                    $servidor = $ponto->servidor($siape);
                     echo "Servidor: <label>{$servidor->nome}</label>";
                     echo "<br>";
                     echo "SIAPE: <label>{$servidor->siape}</label>";
                     echo "<br>";
                     echo "Departamento: <label>{$servidor->descricao}</label>";
+
                     ?>
                 </div>
                 <div id="dadosServidor" class="panel-body">
                     <?php
                     $sumario = $ponto->sumario($siape, $mes, $ano_selecionado);
-                   //     var_dump($sumario);
                     $update = $ponto->ultima_atualizacao();
                     echo "<div>Período: <span id='periodo'>{$sumario->periodo}</span></div>";
                     echo "<div>Carga Horária: <span id='carga_horaria'>{$sumario->carga_horaria}</span></div>";
@@ -163,14 +163,14 @@ if($chefia==0){
                         <th width="80px">Saída 1</th>
                         <th width="80px">Entrada 2</th>
                         <th width="80px">Saída 2</th>
-                        
+
                         <?php
                         $diaSemana = array('1' => 'Domingo','2' => 'Segunda-Feira','3'=>'Terça-Feria','4'=>'Quarta-Feira','5'=>'Quinta-Feria','6'=>'Sexta-Feira','7'=>'Sábado');
                         $horarios= $ponto->horarios($siape);
                         $entradasExtras =FALSE;
                         $entradasSabado =FALSE;
 
-                       for ($i=0; $i <count($horarios) ; $i++) { 
+                        for ($i=0; $i <count($horarios) ; $i++) { 
                             if ($horarios[$i]->entrada3!=null)
                                 $entradasExtras= TRUE;
                         }
@@ -185,45 +185,39 @@ if($chefia==0){
                             <th width='80px'>Saída 3</th>
                             ";
                         }
-
-
-
                         ?>
 
                     </thead>
                     <tbody>
-                        <?php
-                      
+                    <?php
+
                         for ($i=1; $i <count($horarios) ; $i++) { 
-                         
-                          if ($entradasSabado==false and $i>=6) {
-                           break;
-                          }
-                        
-                            echo "<tr>";
-                            echo" <td width='100px'>{$diaSemana[$horarios[$i]->dia_semana]}</th>";
-                            echo" <td width='80px'>{$horarios[$i-1]->entrada1}</th>";
-                            echo" <td width='80px'>{$horarios[$i-1]->saida1}</th>";
-                            echo" <td width='80px'>{$horarios[$i-1]->entrada2}</th>";
-                            echo" <td width='80px'>{$horarios[$i-1]->saida2}</th>";
-                            if($entradasExtras){
-                             echo" <td width='80px'>{$horarios[$i-1]->entrada3}</th>";
-                             echo" <td width='80px'>{$horarios[$i-1]->saida3}</th>";
+
+                            if ($entradasSabado==false and $i>=6) {
+                                break;
                             }
 
-                         echo "</tr>";
-                     }
+                           echo "<tr>";
+                           echo" <td width='100px'>{$diaSemana[$horarios[$i]->dia_semana]}</th>";
+                           echo" <td width='80px'>{$horarios[$i-1]->entrada1}</th>";
+                           echo" <td width='80px'>{$horarios[$i-1]->saida1}</th>";
+                           echo" <td width='80px'>{$horarios[$i-1]->entrada2}</th>";
+                           echo" <td width='80px'>{$horarios[$i-1]->saida2}</th>";
+                        
+                           if($entradasExtras){
+                                echo" <td width='80px'>{$horarios[$i-1]->entrada3}</th>";
+                                echo" <td width='80px'>{$horarios[$i-1]->saida3}</th>";
+                            }
 
+                             echo "</tr>";
+                        }
+                    ?>
 
-
-                     ?>
-
-
-                 </tbody>
-             </table>
-         </div>
+             </tbody>
+         </table>
      </div>
- </div>  
+ </div>
+</div>  
 </div>
 
 
@@ -239,7 +233,7 @@ if($chefia==0){
 </div>
 <div id="collapseOne" class="panel-collapse collapse in">
   <div class="panel-body">
-
+<div class="table-responsive">
     <table class="table table-striped" id="marcacao" name="marcacao">
         <thead>
             <th width="140px">Data</th>
@@ -253,29 +247,35 @@ if($chefia==0){
         <tbody>
 
         </tbody>
-
+ </div>
     </div>
 </div>
 </div>
 </table>
 
-<?php
-$legendas = $ponto->legendas($siape, $mes, $ano_selecionado);
-               //     var_dump($legendas);
-if (count($legendas)) {
-    echo "<h2>Legendas</h2>";
-    echo "<dl class='panel-body'>\n";
-    foreach ($legendas as $legenda) {
-        echo "  <dt>{$legenda->nome}</dt>\n";
-        echo "  <dd>{$legenda->descricao}</dd>\n";
-    }
-    echo "</dl>\n";
-}
-?>
+    <?php
+        $legendas = $ponto->legendas($siape, $mes, $ano_selecionado);
+        
+        if (count($legendas)) {
+            echo "<h2>Legendas</h2>";
+            echo "<dl class='panel-body'>\n";
+
+            foreach ($legendas as $legenda) {
+                echo "  <dt>{$legenda->nome}</dt>\n";
+                echo "  <dd>{$legenda->descricao}</dd>\n";
+            }
+
+            echo "</dl>\n";
+        }
+    ?>
 
 </div>
 <div id="assinaturas">
-    <span><?php echo "{$servidor->nome} ({$siape})"; ?></span>
+    <span>
+        <?php 
+            echo "{$servidor->nome} ({$siape})"; 
+        ?>
+    </span>
     <span>Chefia Imediata</span>
 </div>
 </div>
