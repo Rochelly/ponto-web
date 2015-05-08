@@ -1,3 +1,8 @@
+/**
+ * @author [author]
+ * @version [version]
+ */
+
 
 function get_dados_mes(mes, ano, callback) {
     $.get('/ponto/api.php/pontos?mes=' + mes + '&ano=' + ano, function (data, status) {
@@ -7,9 +12,21 @@ function get_dados_mes(mes, ano, callback) {
             var feriados = data;
             //console.log(batidas, feriados);
             callback(batidas, feriados);
+
+
         });
     });
 }
+
+
+function   terceiraEntrada(mes,ano,callback){
+
+    $get('/ponto/api.php/terceiraentrada?mes=' + mes + '&ano=' + ano,function(data,status){
+        var terceiraMarcacao =data;
+        callback(terceiraMarcacao);
+    });
+}
+
 
 function atualiza(e) {
     var mes = $('#mes').val();
@@ -43,6 +60,14 @@ function atualiza(e) {
     });
 
     get_dados_mes(mes, ano, function (batidas, feriados) {
+
+
+      /*  terceiraEntrada(mes,ano,function (terceiraMarcacao){
+
+            
+        });
+*/
+
         console.log('ok', batidas, feriados);
         var tbody = $('#marcacao tbody');
         tbody.html('');

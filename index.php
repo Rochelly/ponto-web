@@ -22,12 +22,17 @@ function __autoload($c) {
 	}
 }
 
-$ponto = new Ponto;
+
 $siape = $_SESSION['siape'];
 $usuario = $_SESSION['usuario'];
-$chefia= $_SESSION['chefia'];
 
-if($chefia!=0){
+$ponto = new Ponto;
+
+$chefiaDepartamento  = $ponto->chefia($usuario);
+
+
+
+if(count($chefiaDepartamento)!=0){
 	header('location: /ponto/chefia.php');
 	exit;
 
@@ -97,7 +102,7 @@ if($chefia!=0){
 						<?php
 						$meses = array('', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro');
 						$mes = array_key_exists('mes', $_GET) ? $_GET['mes'] : date('n');
-						var_dump($mes);
+			
 						for ($i = 1; $i < 13; $i++) {
 							if ($i == $mes)
 								echo "<option value='{$i}' selected='selected'>{$meses[$i]}</option>";
@@ -178,8 +183,12 @@ if($chefia!=0){
 
 
 												<?php
+											
+												
 												$diaSemana = array('1' => 'Domingo','2' => 'Segunda-Feira','3'=>'Terça-Feria','4'=>'Quarta-Feira','5'=>'Quinta-Feria','6'=>'Sexta-Feira','7'=>'Sábado');
 												$horarios= $ponto->horarios($siape);
+
+										
 												$entradasExtras =FALSE;
 												$entradasSabado =FALSE;
 

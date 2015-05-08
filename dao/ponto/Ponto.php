@@ -11,11 +11,14 @@ class Ponto {
         else
             $uri = Config::get('api_uri') . '/' . $method;
 
+      
+
         $response = json_decode(file_get_contents($uri));
 
 
 
         $result = $response->result;
+
         $data = pack('H*', $result);
 
         $key = Config::get('api_key');
@@ -36,7 +39,6 @@ class Ponto {
         $json = json_decode($data);
 
 
-        
         return $json;
     }
 
@@ -52,5 +54,12 @@ class Ponto {
     public function feriados($siape, $mes, $ano) {
         return $this->request('feriados', array($mes, $ano));
     }
+
+       public function terceiraentrada($siape, $mes, $ano) {
+        return $this->request('terceiraentrada', array($siape,$mes, $ano));
+    }
+
+   
+
 
 }
