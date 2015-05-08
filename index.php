@@ -93,6 +93,9 @@ if(count($chefiaDepartamento)!=0){
 					</nav>
 				</div>
 			</div>
+
+
+
 			<!-- Menu Fim -->
 			<div class="row">
 				<div class="col-md-4"></div>
@@ -102,16 +105,23 @@ if(count($chefiaDepartamento)!=0){
 						<?php
 						$meses = array('', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro');
 						$mes = array_key_exists('mes', $_GET) ? $_GET['mes'] : date('n');
-			
+
 						for ($i = 1; $i < 13; $i++) {
-							if ($i == $mes)
+							if ($i == $mes){
 								echo "<option value='{$i}' selected='selected'>{$meses[$i]}</option>";
-							else
+								$mesSelecionado = $i;
+							}
+							else{
 								echo "<option value='{$i}'>{$meses[$i]}</option>";
+								$mesSelecionado = $i;
+							}
 						}
 						?>
 					</select>
+
 				</div>
+
+
 				<!-- Select Mes Fim -->
 
 				<!-- Select Ano Incio -->
@@ -133,14 +143,15 @@ if(count($chefiaDepartamento)!=0){
 				</div>
 				<!-- Select Ano Fim -->
 			</div>
+
 			<div class="row">
-				<div class="col-md-3"></div>
-				<div class="col-md-6">
+				<div class="col-md-2"></div>
+				<div class="col-md-8">
 					<div class="panel panel-default" id="tabela" >
 						<div class="panel-heading">
 							<?php
 							$servidor = $ponto->servidor($siape);
-					 //   var_dump($servidor);
+
 
 							echo "Servidor: <label>{$servidor->nome}</label>";
 							echo "<br>";
@@ -152,7 +163,7 @@ if(count($chefiaDepartamento)!=0){
 						<div id="dadosServidor" class="panel-body">
 							<?php
 							$sumario = $ponto->sumario($siape, $mes, $ano_selecionado);
-				   //     var_dump($sumario);
+
 							$update = $ponto->ultima_atualizacao();
 							echo "<div>Período: <span id='periodo'>{$sumario->periodo}</span></div>";
 							echo "<div>Carga Horária: <span id='carga_horaria'>{$sumario->carga_horaria}</span></div>";
@@ -183,12 +194,12 @@ if(count($chefiaDepartamento)!=0){
 
 
 												<?php
-											
+
 												
 												$diaSemana = array('1' => 'Domingo','2' => 'Segunda-Feira','3'=>'Terça-Feria','4'=>'Quarta-Feira','5'=>'Quinta-Feria','6'=>'Sexta-Feira','7'=>'Sábado');
 												$horarios= $ponto->horarios($siape);
 
-										
+
 												$entradasExtras =FALSE;
 												$entradasSabado =FALSE;
 
@@ -261,31 +272,24 @@ if(count($chefiaDepartamento)!=0){
 							</div>
 							<div id="collapseOne" class="panel-collapse collapse in">
 								<div class="panel-body">
-<div class="table-responsive">
-									<table class="table table-striped" id="marcacao" name="marcacao">
-										<thead>
-											<th >Data</th>
-											<th >Entrada</th>
-											<th >Saída</th>
-											<th >Entrada</th>
-											<th >Saída</th>
-											<th >Entrada</th>
-											<th >Saída</th>
-											<th >Horas Trabalhadas</th>
-											<th>Saldo</th>
-										</thead>
-										<tbody>
+									<div class="table-responsive">
+										<table class="table table-striped" id="marcacao" name="marcacao">
+											<thead>
+											</thead>
+										
+											<tbody>
+											</tbody>
 
-										</tbody>
+
+										</table>
 
 									</div>
 								</div>
 							</div>
-						</table>
-</div>
+						</div>
 						<?php
 						$legendas = $ponto->legendas($siape, $mes, $ano_selecionado);
-			   //     var_dump($legendas);
+
 						if (count($legendas)) {
 							echo "<h2>Legendas</h2>";
 							echo "<dl class='panel-body'>\n";

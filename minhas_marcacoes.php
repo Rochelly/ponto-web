@@ -29,7 +29,8 @@ $ponto= new Ponto;
 $chefiaDepartamento  = $ponto->chefia($usuario);
 
 /**
- * [count($chefiaDepartamento) verifica se o usuario e  um chefe, caso nao seja, o mesmo e redirecionado a pagina index(pagina de  marcaçoes de funcionarios)]
+ * [count($chefiaDepartamento) verifica se o usuario e  um chefe, caso nao seja, o 
+ * mesmo e redirecionado a pagina index(pagina de  marcaçoes de funcionarios)]
  * @var [int]
  */
 if(count($chefiaDepartamento)==0){
