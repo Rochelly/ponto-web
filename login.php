@@ -9,6 +9,7 @@ $msg = '';
 
 if (array_key_exists('login', $_POST)) {
 	$usuario = $_POST['login'];
+	$usuario ='arfonseca';
 	$conn = new Ldap();
 	$result = $conn->search($base_dn, "uid={$_POST['login']}", array('cn', 'employeeNumber'));
 

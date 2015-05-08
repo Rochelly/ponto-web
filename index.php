@@ -109,11 +109,10 @@ if(count($chefiaDepartamento)!=0){
 						for ($i = 1; $i < 13; $i++) {
 							if ($i == $mes){
 								echo "<option value='{$i}' selected='selected'>{$meses[$i]}</option>";
-								$mesSelecionado = $i;
+
 							}
 							else{
 								echo "<option value='{$i}'>{$meses[$i]}</option>";
-								$mesSelecionado = $i;
 							}
 						}
 						?>
