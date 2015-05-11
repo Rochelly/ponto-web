@@ -4,6 +4,7 @@
  */
 
 
+
  function get_dados_mes(mes, ano, callback) {
  	$.get('/ponto/api.php/pontos?mes=' + mes + '&ano=' + ano, function (data, status) {
 		/**
@@ -57,18 +58,35 @@
 
 
  	$.get('/ponto/api.php/legendas?mes=' + mes + '&ano=' + ano, function (data, status) {
- 		var leg = $("#legendas");
- 		$("#legendas").text('');
+
+ 		var  caption = $("#legenda  caption");
+ 		caption.html('');
+ 		var  thead = $("#legenda thead");
+ 		thead.html('');
+ 		var  tbody = $("#legenda  tbody");
+ 		tbody.html('');
+
+
+
  		if (data && data.length) {
- 			leg.append($('<h2>').text('Legendas'));
- 			var list = $('<dl>');
- 			for (var i = 0; i < data.length; i++) {
- 				var dt = $('<dt>').text(data[i].nome);
- 				var dd = $('<dd>').text(data[i].descricao);
- 				list.append(dt);
- 				list.append(dd);
+ 	caption.append("<h2>Legenda:</h2>");
+
+ thead.append($('<th>', {html: '<center>   Código </center>  '}));
+ thead.append($('<th>', {html: '<center>Descrição'}));
+
+
+		 	
+
+ 	 			for (var i = 0; i < data.length; i++) {
+
+ 	 				var nome = data[i].nome;
+ 	 				var descricao = data[i].descricao;
+ 	 				console.log(data[i].descricao);
+ 	 				var tr="<tr><td>"+nome+"</td><td>"+descricao+"</td></tr>";
+					 thead.append(tr);
+ 		
  			}
- 			leg.append(list);
+ 		
  		}
  	});
 
@@ -90,25 +108,29 @@
 								// <th >Horas Trabalhadas</th>
 								// <th>Saldo</th>
 
- 		var thead = $('#marcacao thead');
- 		thead.html('');
- 		
- 
- 		thead.append($('<th>', {html: '<center>Data'}));
- 		thead.append($('<th>', {html: '<center>Entrada'}));
- 		thead.append($('<th>', {html: '<center>Saida'}));
- 		thead.append($('<th>', {html: '<center>Entrada'}));
- 		thead.append($('<th>', {html: '<center>Saida'}));
- 		if(terceiraMarcacao.quantidade>0){
- 		thead.append($('<th>', {html: '<center>Entrada'}));
- 		thead.append($('<th>', {html: '<center>Saida'}));
- 		}
- 		thead.append($('<th>', {html: '<center>Horas Trabalhadas'}));
- 		thead.append($('<th>', {html: '<center>Saldo'}));
+								/**
+								 * Titulo  da tabela de marcaçoes 
+								 */
 
- 		
- 		var tbody = $('#marcacao tbody');
- 		tbody.html('');
+								 var thead = $('#marcacao thead');
+								 thead.html('');
+
+
+								 thead.append($('<th>', {html: '<center>Data'}));
+								 thead.append($('<th>', {html: '<center>Entrada'}));
+								 thead.append($('<th>', {html: '<center>Saida'}));
+								 thead.append($('<th>', {html: '<center>Entrada'}));
+								 thead.append($('<th>', {html: '<center>Saida'}));
+								 if(terceiraMarcacao.quantidade>0){
+								 	thead.append($('<th>', {html: '<center>Entrada'}));
+								 	thead.append($('<th>', {html: '<center>Saida'}));
+								 }
+								 thead.append($('<th>', {html: '<center>Horas Trabalhadas'}));
+								 thead.append($('<th>', {html: '<center>Saldo'}));
+
+
+								 var tbody = $('#marcacao tbody');
+								 tbody.html('');
 
 		/**
 		 * [lastDay  numero de quantidade de  dias do mes selecionado]
@@ -162,7 +184,7 @@
 				 */
 				 if (i < batidas.length && batidas[i].bdata == datames) {
 
-				 		var texto = '<center>--:--</center>';
+				 	var texto = '<center>--:--</center>';
 					/**
 					 * [hoje   uma data para dia do mes  para se  comparar se  o dia e sabado ou 
 					 * domingo]
@@ -190,11 +212,15 @@
 					  * [if confere se o funcionario possui uma  terceira marcaçao de ponto no mes]
 					  * @param terceiraMarcacao.quantidade>0 [quantidade de  vezes de terceiras marcaçao ]
 					  */
-					 if(terceiraMarcacao.quantidade>0){
-					 	tr.append($('<td>', {html: batidas[i].bentrada3 == null ? texto : '<center><span title='+batidas[i].eentrada2+'>' +batidas[i].bentrada3.replace('_', '')+ '</span>'}));
-					 	tr.append($('<td>', {html: batidas[i].bsaida3 == null ? texto : '<center><span title='+batidas[i].esaida2+'>' +batidas[i].bsaida3.replace('_', '')+ '</span>'}));
-					 }
-					 tr.append($('<td>', {html: batidas[i].horas_trabalhadas == null ? texto : '<center>'+batidas[i].horas_trabalhadas}));
+					  if(terceiraMarcacao.quantidade>0){
+					  	tr.append($('<td>', {html: batidas[i].bentrada3 == null ? texto : '<center><span title='+batidas[i].eentrada2+'>' +batidas[i].bentrada3.replace('_', '')+ '</span>'}));
+					  	tr.append($('<td>', {html: batidas[i].bsaida3 == null ? texto : '<center><span title='+batidas[i].esaida2+'>' +batidas[i].bsaida3.replace('_', '')+ '</span>'}));
+					  }
+
+					 // Coluna de  horas Trabalhadas
+					 tr.append($('<td>', {html: batidas[i].horas_trabalhadas == null ? texto : '<center>'+batidas[i].horas_trabalhadas})); 
+
+					 // Busca  o saldo  no  banco
 					 if (batidas[i].saldo != null) {
 					 	if (batidas[i].saldo[0] == "-")
 					 		tr.append($('<td>', {html: '<center><span class="saldo neg">' + batidas[i].saldo + '</span>'}));
@@ -208,20 +234,33 @@
 					 i++;
 					}
 			/**
-			 *  Se o dia e superior ao  dia atual, entao somente 
-			 *  complete as marcaçoes  com '--:--'
+			 *  Se  a data  criada no loop nao  estiver na tabela batidas
+			 *  pode ser por  3  motivos :
+				 *  Feriado
+				 *  Fim de Semana
+				 *  Falta do servidor
+			 * 
 			 */
 			 else {
+			 	
+			 	var falta = true;
+
 			 	var texto = '<center>--:--</center>';
 
-			 	var feriado = feriados.filter(function (item) {
-			 		return item.data == datames;
-			 	});
+			 	/**
+			 	 * [description] 	retorna o feriado se  existir
+			 	 * @param  {[type]} item) {return item.data [feriado]
+			 	 * @return {[type]}       [data]
+			 	 */
+			 	 var feriado = feriados.filter(function (item) {
+			 	 	return item.data == datames;
+			 	 });
 
-			 	if (feriado.length) {
-			 		texto = '<center><span class="folga" title="'+feriado[0].descricao+'">Feriado</span></center>';
+			 	 if (feriado.length) {
+			 	 	texto = '<center><span class="folga" title="'+feriado[0].descricao+'">Feriado</span></center>';
 					//texto = '<span class="folga">'+feriado[0].descricao+'</span>';
 					tr = tr2;
+					falta = false;
 				}
 
 				/**
@@ -234,26 +273,28 @@
 				 if (hoje.getUTCDay() == 0){
 				 	texto = '<center><span class="folga">Domingo</span>';
 				 	tr=tr2;
+				 	falta = false;
 				 }
 				 if (hoje.getUTCDay() == 6){
 				 	texto = '<center><span class="folga">Sábado</span>';
 				 	tr=tr2;
+				 	falta = false;
 				 }
 
 				 if ((hoje.getUTCDay() == 6) | (hoje.getUTCDay() == 0))
 				 	feriado += 8;
 
-				 tr.append($('<td>', {html: '<center>'+datames}));
-				 tr.append($('<td>', {html: texto}));
-				 tr.append($('<td>', {html: texto}));
-				 tr.append($('<td>', {html: texto}));
+				 tr.append($('<td>', {html: '<center>'+datames})); // Data
+				 tr.append($('<td>', {html: texto})); // Entrada 1
+				 tr.append($('<td>', {html: texto})); // Saida 1
+				 tr.append($('<td>', {html: texto})); // Entrada 2
+				 tr.append($('<td>', {html: texto})); // Saida 2
 				 if(terceiraMarcacao.quantidade>0){
-				 tr.append($('<td>', {html: texto}));
-				 tr.append($('<td>', {html: texto}));
+				 tr.append($('<td>', {html: texto})); // Entrada 3
+				 tr.append($('<td>', {html: texto})); // Saida3
 				}
-				 tr.append($('<td>', {html: texto}));
-				 tr.append($('<td>', {html: texto}));
-				 tr.append($('<td>', {html: texto}));
+				 tr.append($('<td>', {html: texto})); // Horas Trabalhadas
+				 tr.append($('<td>', {html: texto})); // Saldo
 				 tbody.append(tr);
 				}
 			}

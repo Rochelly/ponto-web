@@ -31,7 +31,6 @@ $ponto = new Ponto;
 $chefiaDepartamento  = $ponto->chefia($usuario);
 
 
-
 if(count($chefiaDepartamento)!=0){
 	header('location: /ponto/chefia.php');
 	exit;
@@ -287,7 +286,7 @@ if(count($chefiaDepartamento)!=0){
 							</div>
 						</div>
 						<?php
-						$legendas = $ponto->legendas($siape, $mes, $ano_selecionado);
+/*						$legendas = $ponto->legendas($siape, $mes, $ano_selecionado);
 
 						if (count($legendas)) {
 							echo "<h2>Legendas</h2>";
@@ -297,8 +296,26 @@ if(count($chefiaDepartamento)!=0){
 								echo "  <dd>{$legenda->descricao}</dd>\n";
 							}
 							echo "</dl>\n";
-						}
+						}*/
 						?>
+						<table  id='legenda' class="table table-bordered" >
+							<caption></caption>
+							<thead >
+								<tr>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td></td>
+								</tr>
+							</tbody>
+						</table>
+							
+			
+
+
+
 
 					</div>
 					<div id="assinaturas">

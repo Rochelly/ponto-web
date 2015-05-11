@@ -17,6 +17,8 @@ if (array_key_exists('login', $_POST)) {
 	$user_dn = $result->entry_dn();
 	$user_pw = $_POST['senha'];
 
+
+
    /**
 	* Faz o  login e incia a sessao
 	* Informaçoes disponiveis na sessao:
@@ -28,6 +30,7 @@ if (array_key_exists('login', $_POST)) {
 
 		$_SESSION['usuarioNome'] = $entry['cn'][0];
 		$_SESSION['siape'] = $entry['employeeNumber'][0];
+	
 		$_SESSION['usuario']=$usuario;
 	
 		header('location: /ponto/index.php');
