@@ -26,7 +26,6 @@
 			//console.log(batidas, feriados);
 
 
-
 			$.get('/ponto/api.php/terceiraentrada?mes=' + mes + '&ano=' + ano, function (data, status) {
 			/**
 			 * [terceiraMarcacao Object {quantidade:0} -> refere-se a quantidade de terceira  marcaçao que o  funcionario teve no mes]
@@ -36,13 +35,6 @@
 			 callback(batidas, feriados, terceiraMarcacao);
 
 			});
-
-
-
-
-
-
-
 		});
 		});
  }
@@ -57,80 +49,66 @@
  	var feriado = 0;
 
 
- 	$.get('/ponto/api.php/legendas?mes=' + mes + '&ano=' + ano, function (data, status) {
+/**
+ * [description: cria um tabela  na  pagina de marcaçoes sempre que no  mes constar uma ocorrencia
+ * no mes, construindo  uma legenda  para os codigos da ocorrencia ]
+ */
+ $.get('/ponto/api.php/legendas?mes=' + mes + '&ano=' + ano, function (data, status) {
 
- 		var  caption = $("#legenda  caption");
- 		caption.html('');
- 		var  thead = $("#legenda thead");
- 		thead.html('');
- 		var  tbody = $("#legenda  tbody");
- 		tbody.html('');
+ 	var  caption = $("#legenda  caption");
+ 	caption.html('');
 
+ 	var  thead = $("#legenda thead");
+ 	thead.html('');
 
+ 	var  tbody = $("#legenda  tbody");
+ 	tbody.html('');
 
- 		if (data && data.length) {
- 	caption.append("<h2>Legenda:</h2>");
+ 	if (data && data.length) {
 
- thead.append($('<th>', {html: '<center>   Código </center>  '}));
- thead.append($('<th>', {html: '<center>Descrição'}));
+ 		caption.append("<h2>Legenda:</h2>");
+ 		thead.append($('<th>', {html: '<center>   Código </center>  '}));
+ 		thead.append($('<th>', {html: '<center>Descrição'}));
 
-
-		 	
-
- 	 			for (var i = 0; i < data.length; i++) {
-
- 	 				var nome = data[i].nome;
- 	 				var descricao = data[i].descricao;
- 	 				console.log(data[i].descricao);
- 	 				var tr="<tr><td>"+nome+"</td><td>"+descricao+"</td></tr>";
-					 thead.append(tr);
- 		
- 			}
- 		
+ 		for (var i = 0; i < data.length; i++) {
+ 			var nome = data[i].nome;
+ 			var descricao = data[i].descricao;
+ 			var tr="<tr><td>"+nome+"</td><td>"+descricao+"</td></tr>";
+ 			thead.append(tr);
  		}
- 	});
+ 		
+ 	}
+ });
 
- 	$.get('/ponto/api.php/sumario?mes=' + mes + '&ano=' + ano, function (data, status) {
- 		data.periodo !== undefined ? $("#periodo").text(data.periodo) :  $("#periodo").text("");
- 		data.carga_horaria !== undefined ? $("#carga_horaria").text(data.carga_horaria) : $("#carga_horaria").text("");
- 		data.horas_trabalhadas !== null ? $("#horas_trabalhadas").text(data.horas_trabalhadas) : $("#horas_trabalhadas").text("");
- 		data.saldo !== null ? $("#saldo").text(data.saldo) : $("#saldo").text("");
- 		$("#saldo").removeClass('saldo pos neg');
- 		if(data.saldo) $("#saldo").addClass(data.saldo[0] == '-' ? 'saldo neg' : 'saldo pos')
- 	});
+ $.get('/ponto/api.php/sumario?mes=' + mes + '&ano=' + ano, function (data, status) {
+ 	data.periodo !== undefined ? $("#periodo").text(data.periodo) :  $("#periodo").text("");
+ 	data.carga_horaria !== undefined ? $("#carga_horaria").text(data.carga_horaria) : $("#carga_horaria").text("");
+ 	data.horas_trabalhadas !== null ? $("#horas_trabalhadas").text(data.horas_trabalhadas) : $("#horas_trabalhadas").text("");
+ 	data.saldo !== null ? $("#saldo").text(data.saldo) : $("#saldo").text("");
+ 	$("#saldo").removeClass('saldo pos neg');
+ 	if(data.saldo) $("#saldo").addClass(data.saldo[0] == '-' ? 'saldo neg' : 'saldo pos')
+ });
 
- 	get_dados_mes(mes, ano, function (batidas, feriados,terceiraMarcacao) {
-								// <th >Data</th>
-								// <th >Entrada</th>
-								// <th >Saída</th>
-								// <th >Entrada</th>
-								// <th >Saída</th>
-								// <th >Horas Trabalhadas</th>
-								// <th>Saldo</th>
+ get_dados_mes(mes, ano, function (batidas, feriados,terceiraMarcacao) {
+		/**
+		 * Titulo  da tabela de marcaçoes 
+		 */
 
-								/**
-								 * Titulo  da tabela de marcaçoes 
-								 */
-
-								 var thead = $('#marcacao thead');
-								 thead.html('');
-
-
-								 thead.append($('<th>', {html: '<center>Data'}));
-								 thead.append($('<th>', {html: '<center>Entrada'}));
-								 thead.append($('<th>', {html: '<center>Saida'}));
-								 thead.append($('<th>', {html: '<center>Entrada'}));
-								 thead.append($('<th>', {html: '<center>Saida'}));
-								 if(terceiraMarcacao.quantidade>0){
-								 	thead.append($('<th>', {html: '<center>Entrada'}));
-								 	thead.append($('<th>', {html: '<center>Saida'}));
-								 }
-								 thead.append($('<th>', {html: '<center>Horas Trabalhadas'}));
-								 thead.append($('<th>', {html: '<center>Saldo'}));
-
-
-								 var tbody = $('#marcacao tbody');
-								 tbody.html('');
+		 var thead = $('#marcacao thead');
+		 thead.html('');
+		 thead.append($('<th>', {html: '<center>Data'}));
+		 thead.append($('<th>', {html: '<center>Entrada'}));
+		 thead.append($('<th>', {html: '<center>Saida'}));
+		 thead.append($('<th>', {html: '<center>Entrada'}));
+		 thead.append($('<th>', {html: '<center>Saida'}));
+		 if(terceiraMarcacao.quantidade>0){
+		 	thead.append($('<th>', {html: '<center>Entrada'}));
+		 	thead.append($('<th>', {html: '<center>Saida'}));
+		 }
+		 thead.append($('<th>', {html: '<center>Horas Trabalhadas'}));
+		 thead.append($('<th>', {html: '<center>Saldo'}));
+		 var tbody = $('#marcacao tbody');
+		 tbody.html('');
 
 		/**
 		 * [lastDay  numero de quantidade de  dias do mes selecionado]
@@ -151,13 +129,12 @@
 		 mesAtual = (mesAtual < 10) ? "0" + mesAtual : mesAtual.toString();
 		 diaAtual = (diaAtual < 10) ? '0' + diaAtual : diaAtual.toString();
 		 dataAtual = diaAtual+"/"+mesAtual+"/"+anoAtual;
-
-
 		/**
 		 * [for   roda o  numero  de dias do  mes]
 		 * @param  {Number} dia [quantidade de dias do mes]
 		 * @param  {[type]} i   [description quantidade  de objetos(instancias da  consulta do banco )]
 		 */
+		
 		 for (dia = 1, i = 0; dia <= lastDay; dia++) {
 		 	var str_mes = (mes < 10) ? "0" + mes : mes;
 		 	var str_dia = (dia < 10) ? '0' + dia : dia.toString();
@@ -289,6 +266,7 @@
 				 tr.append($('<td>', {html: texto})); // Saida 1
 				 tr.append($('<td>', {html: texto})); // Entrada 2
 				 tr.append($('<td>', {html: texto})); // Saida 2
+				  
 				 if(terceiraMarcacao.quantidade>0){
 				 tr.append($('<td>', {html: texto})); // Entrada 3
 				 tr.append($('<td>', {html: texto})); // Saida3
@@ -307,6 +285,7 @@
 $(document).ready(function () {
 	$('#mes').change(atualiza);
 	atualiza();
+
 
 	$('.collapse').on('shown.bs.collapse', function(){
 		$(this).parent().find(".glyphicon-plus").removeClass("glyphicon-plus").addClass("glyphicon-minus");

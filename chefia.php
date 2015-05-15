@@ -200,6 +200,10 @@ if(count($chefiaDepartamento)==0){
 						</select>
 					</div>
 				</div>
+				<!-- 
+					Cabeçalho para a impressao
+
+				 -->
 				<div id='imagens' name=''>
 					<center>
 						<img src="/ponto/img/cabecalho.png"  align="left"  />
@@ -383,7 +387,11 @@ if (count($ocorrencias)>0)
 <div id="assinaturas">
 </br>
 </br>
-<span><?php echo "{$_SESSION['usuarioNome']} ({$siape}) </br> Encarregado da  Frequência"; ?></span>
+<span><?php 
+
+	echo "{$_SESSION['usuarioNome']} ({$siape}) </br> Encarregado da  Frequência"; 
+
+?></span>
 
 </div>
 

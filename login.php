@@ -9,7 +9,7 @@ $msg = '';
 
 if (array_key_exists('login', $_POST)) {
 	$usuario = $_POST['login'];
-
+/*	$usuario = 'arfonseca';*/
 	$conn = new Ldap();
 	$result = $conn->search($base_dn, "uid={$_POST['login']}", array('cn', 'employeeNumber'));
 
@@ -17,10 +17,8 @@ if (array_key_exists('login', $_POST)) {
 	$user_dn = $result->entry_dn();
 	$user_pw = $_POST['senha'];
 
-
-
    /**
-	* Faz o  login e incia a sessao
+    * Faz o  login e incia a sessao
 	* Informaçoes disponiveis na sessao:
 	* $_SESSION['usuarioNome'] --> Nome completo do Usuario (Fonte: Ldap)
    	* $_SESSION['siape']  -> SIAPE do servidor (Fonte: Ldap)
@@ -30,7 +28,7 @@ if (array_key_exists('login', $_POST)) {
 
 		$_SESSION['usuarioNome'] = $entry['cn'][0];
 		$_SESSION['siape'] = $entry['employeeNumber'][0];
-	
+		/*	$_SESSION['siape'] = '390134';*/
 		$_SESSION['usuario']=$usuario;
 	
 		header('location: /ponto/index.php');
@@ -69,7 +67,7 @@ if (array_key_exists('login', $_POST)) {
 					<fieldset>
 						<!-- Form Name -->
 						<legend>Registro Eletrônico de Ponto</legend>
-
+   
 						<!-- Text input-->
 						<div class="control-group">
 							<label class="control-label" for="login">Login</label>
