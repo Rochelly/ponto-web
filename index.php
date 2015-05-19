@@ -30,7 +30,6 @@ $ponto = new Ponto;
 
 $chefiaDepartamento  = $ponto->chefia($usuario);
 
-
 if(count($chefiaDepartamento)!=0){
 	header('location: /ponto/chefia.php');
 	exit;
@@ -39,6 +38,9 @@ if(count($chefiaDepartamento)!=0){
 
 
 ?>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

@@ -5,55 +5,119 @@
 
 
 
- function get_dados_mes(mes, ano, callback) {
- 	$.get('/ponto/api.php/pontos?mes=' + mes + '&ano=' + ano, function (data, status) {
-		/**
-		 * [batidas contem a  data da batida, entradas(1,2,3), saidas(1,2,3),dia  da semana(1 a 7), carga_horaria, locais das marcaçoes,minutos trabalhados]
-		 * @type {[type]}
-		 */
-		 var batidas = data;
+ function converteHorasEmMinutos(horas){
 
-		 $.get('/ponto/api.php/feriados?mes=' + mes + '&ano=' + ano, function (data, status) {
-			/**
-			 * [feriados  apresenta as senguintes informaçoes  (exemplo):
-			 * 
-				 * data: "01/05/2015"
-				 * descricao: "Dia do Trabalho"
-				 * id: 5]
-			 * @type {array de Objects}
-			 */
-			 var feriados = data;
-			//console.log(batidas, feriados);
+ 	horas2 = horas.split(":");
 
+ 	if (horas[0]=='-') {
+ 		var tempoHoras   = horas2[0];
 
-			$.get('/ponto/api.php/terceiraentrada?mes=' + mes + '&ano=' + ano, function (data, status) {
-			/**
-			 * [terceiraMarcacao Object {quantidade:0} -> refere-se a quantidade de terceira  marcaçao que o  funcionario teve no mes]
-			 * @type {[type]}
-			 */
-			 var terceiraMarcacao = data;
-			 callback(batidas, feriados, terceiraMarcacao);
+ 		var tempoMinutos = horas2[1];
 
-			});
-		});
-		});
+ 		return (( parseInt(tempoHoras, 10)* 60) - parseInt(tempoMinutos, 10));
+ 	}
+ 	else{
+ 		var tempoHoras   = horas2[0];
+ 		var tempoMinutos = horas2[1];
+ 		return( (tempoHoras * 60) + parseInt(tempoMinutos, 10));
+ 	}
+
  }
 
 
+ function converteMinutosEmHoras(minutos){
+ 	if(minutos>=0){
+ 		var horas = parseInt(minutos/60,10);
+ 		var minutos = minutos - horas*60;
+ 		if (minutos>=10)
+ 			return horas.toString()+':'+minutos.toString();
+ 		if (minutos == 0)
+ 			return horas.toString()+':'+minutos.toString()+'0';
+ 		else
+ 			return horas.toString()+':0'+minutos.toString();
+ 	}else{
+
+ 		minutos = minutos*(-1);
+ 		var horas = parseInt(minutos/60,10);
+ 		var minutos = minutos - horas*60;
+ 		if (minutos>=10)
+ 			return '-'+horas.toString()+':'+minutos.toString();
+ 		if (minutos == 0)
+ 			return horas.toString()+':'+minutos.toString()+'0';
+ 		else
+ 			return '-'+horas.toString()+':0'+minutos.toString();
+
+ 	}
+ }
+/**
+ * Calcula a diferença entre dois horarios e retorna
+ * em minutos a  diferença
+ * 
+ */
+ function diferencaEntreHoras (saida1,entrada2){
+	 	/**
+		 * saidaTempo = [saida1 convertida  em minutos]
+		 */
+		 var saidaTempo = converteHorasEmMinutos(saida1);
+		 /**
+		 * entradaTempo = [entrada1 convertida  em minutos]
+		 */
+		 var entradaTempo = converteHorasEmMinutos(entrada2);
+		/**
+		 * retorna a Diferença entre os dois horarios da entrada convertido em minutos
+		 */
+		 return (parseInt(entradaTempo, 10) - parseInt(saidaTempo, 10))
+
+ }
 
 
+function get_dados_mes(mes, ano, callback) {
+			$.get('/ponto/api.php/pontos?mes=' + mes + '&ano=' + ano, function (data, status) {
+			/**
+			 * [batidas contem a  data da batida, entradas(1,2,3), saidas(1,2,3),dia  da semana(1 a 7), carga_horaria, locais das marcaçoes,minutos trabalhados]
+			 * @type {[type]}
+			 */
+			 var batidas = data;
 
- function atualiza(e) {
- 	var mes = $('#mes').val();
- 	var ano = $('#ano').val();
- 	var feriado = 0;
+			 $.get('/ponto/api.php/feriados?mes=' + mes + '&ano=' + ano, function (data, status) {
+				/**
+				 * [feriados  apresenta as senguintes informaçoes  (exemplo):
+				 * 
+					 * data: "01/05/2015"
+					 * descricao: "Dia do Trabalho"
+					 * id: 5]
+				 * @type {array de Objects}
+				 */
+				 var feriados = data;
 
+
+				 $.get('/ponto/api.php/terceiraentrada?mes=' + mes + '&ano=' + ano, function (data, status) {
+				/**
+				 * [terceiraMarcacao Object {quantidade:0} -> refere-se a quantidade de terceira  marcaçao que o  funcionario teve no mes]
+				 * @type {[type]}
+				 */
+				 var terceiraMarcacao = data;
+				 callback(batidas, feriados, terceiraMarcacao);
+
+				});
+				});
+			});
+}
+
+
+function atualiza(e) {
+			var mes = $('#mes').val();
+			var ano = $('#ano').val();
+			var feriado = 0;
+			var minutosDescontadosDia = 0;
+			minutosDescontadosMes = 0; 
 
 /**
  * [description: cria um tabela  na  pagina de marcaçoes sempre que no  mes constar uma ocorrencia
  * no mes, construindo  uma legenda  para os codigos da ocorrencia ]
  */
- $.get('/ponto/api.php/legendas?mes=' + mes + '&ano=' + ano, function (data, status) {
+$.get('/ponto/api.php/legendas?mes=' + mes + '&ano=' + ano, function (data, status) {
+
 
  	var  caption = $("#legenda  caption");
  	caption.html('');
@@ -80,14 +144,7 @@
  	}
  });
 
- $.get('/ponto/api.php/sumario?mes=' + mes + '&ano=' + ano, function (data, status) {
- 	data.periodo !== undefined ? $("#periodo").text(data.periodo) :  $("#periodo").text("");
- 	data.carga_horaria !== undefined ? $("#carga_horaria").text(data.carga_horaria) : $("#carga_horaria").text("");
- 	data.horas_trabalhadas !== null ? $("#horas_trabalhadas").text(data.horas_trabalhadas) : $("#horas_trabalhadas").text("");
- 	data.saldo !== null ? $("#saldo").text(data.saldo) : $("#saldo").text("");
- 	$("#saldo").removeClass('saldo pos neg');
- 	if(data.saldo) $("#saldo").addClass(data.saldo[0] == '-' ? 'saldo neg' : 'saldo pos')
- });
+
 
  get_dados_mes(mes, ano, function (batidas, feriados,terceiraMarcacao) {
 		/**
@@ -134,7 +191,7 @@
 		 * @param  {Number} dia [quantidade de dias do mes]
 		 * @param  {[type]} i   [description quantidade  de objetos(instancias da  consulta do banco )]
 		 */
-		
+
 		 for (dia = 1, i = 0; dia <= lastDay; dia++) {
 		 	var str_mes = (mes < 10) ? "0" + mes : mes;
 		 	var str_dia = (dia < 10) ? '0' + dia : dia.toString();
@@ -181,8 +238,27 @@
 
 					 tr.append($('<td>', {html: '<center>'+datames}));
 					 tr.append($('<td>', {html: batidas[i].bentrada1 == null ? texto : '<center><span title='+batidas[i].eentrada1+'>' + batidas[i].bentrada1.replace('_', '') + '</span>'}));
-					 tr.append($('<td>', {html: batidas[i].bsaida1 == null ? texto : '<center><span title='+batidas[i].esaida1+'>' +batidas[i].bsaida1.replace('_', '')+'</span>'}));
-					 tr.append($('<td>', {html: batidas[i].bentrada2 == null ? texto : '<center><span title='+batidas[i].eentrada2+'>' +batidas[i].bentrada2.replace('_', '')+ '</span>'}));
+					/**
+					 * verificando se  o funcionario fez menos de uma hora de almoço
+					 */
+					 if ((batidas[i].bsaida1 != null) && (batidas[i].bentrada2 != null ) && (diferencaEntreHoras(batidas[i].bsaida1,batidas[i].bentrada2)<60) ) {
+					 	tr.append($('<td>', {html: batidas[i].bsaida1 == null ? texto : '<center><span class="saldo neg" title=Menos_de_uma_hora_de_almoço:_'+batidas[i].esaida1+'>' +batidas[i].bsaida1.replace('_', '')+'</span>'}));
+					 	tr.append($('<td>', {html: batidas[i].bentrada2 == null ? texto : '<center><span class="saldo neg" title= Menos_de_uma_hora_de_almoço:_'+batidas[i].eentrada2+'>' +batidas[i].bentrada2.replace('_', '')+ '</span>'}));
+
+					 	minutosDescontadosDia = 60 - diferencaEntreHoras(batidas[i].bsaida1,batidas[i].bentrada2);
+
+					 	minutosDescontadosMes = minutosDescontadosMes + minutosDescontadosDia;
+					 	console.log(minutosDescontadosMes);
+
+					 }
+					 else{
+					 	tr.append($('<td>', {html: batidas[i].bsaida1 == null ? texto : '<center><span title='+batidas[i].esaida1+'>' +batidas[i].bsaida1.replace('_', '')+'</span>'}));
+					 	tr.append($('<td>', {html: batidas[i].bentrada2 == null ? texto : '<center><span title='+batidas[i].eentrada2+'>' +batidas[i].bentrada2.replace('_', '')+ '</span>'}));
+					 	minutosDescontadosDia = 0;
+					 	minutosDescontadosMes = minutosDescontadosMes + minutosDescontadosDia;
+					 }
+
+
 					 tr.append($('<td>', {html: batidas[i].bsaida2 == null ? texto : '<center><span title='+batidas[i].esaida2+'>' +batidas[i].bsaida2.replace('_', '')+ '</span>'}));
 
 					 /**
@@ -199,10 +275,18 @@
 
 					 // Busca  o saldo  no  banco
 					 if (batidas[i].saldo != null) {
-					 	if (batidas[i].saldo[0] == "-")
-					 		tr.append($('<td>', {html: '<center><span class="saldo neg">' + batidas[i].saldo + '</span>'}));
-					 	else
-					 		tr.append($('<td>', {html: '<center><span class="saldo pos">' + batidas[i].saldo + '</span>'}));
+					 	if (batidas[i].saldo[0] == "-"){
+
+					 		var saldo = converteMinutosEmHoras(converteHorasEmMinutos(batidas[i].saldo) - minutosDescontadosDia);
+
+
+					 		tr.append($('<td>', {html: '<center><span class="saldo neg">' + saldo + '</span>'}));
+					 	}
+					 	else{
+					 		var saldo = converteMinutosEmHoras(converteHorasEmMinutos(batidas[i].saldo) - minutosDescontadosDia);
+
+					 		tr.append($('<td>', {html: '<center><span class="saldo pos">' + saldo + '</span>'}));
+					 	}
 					 } 
 					 else {
 					 	tr.append($('<td>', {html: texto}));
@@ -266,7 +350,7 @@
 				 tr.append($('<td>', {html: texto})); // Saida 1
 				 tr.append($('<td>', {html: texto})); // Entrada 2
 				 tr.append($('<td>', {html: texto})); // Saida 2
-				  
+
 				 if(terceiraMarcacao.quantidade>0){
 				 tr.append($('<td>', {html: texto})); // Entrada 3
 				 tr.append($('<td>', {html: texto})); // Saida3
@@ -277,6 +361,18 @@
 				}
 			}
 		});
+
+$.get('/ponto/api.php/sumario?mes=' + mes + '&ano=' + ano, function (data, status) {
+	data.periodo !== undefined ? $("#periodo").text(data.periodo) :  $("#periodo").text("");
+	data.carga_horaria !== undefined ? $("#carga_horaria").text(data.carga_horaria) : $("#carga_horaria").text("");
+	data.horas_trabalhadas !== null ? $("#horas_trabalhadas").text(data.horas_trabalhadas) : $("#horas_trabalhadas").text("");
+
+	console.log(data.saldo);
+	console.log("MinMEs:",minutosDescontadosMes);
+	data.saldo !== null ? $("#saldo").text(data.saldo) : $("#saldo").text("");
+	$("#saldo").removeClass('saldo pos neg');
+	if(data.saldo) $("#saldo").addClass(data.saldo[0] == '-' ? 'saldo neg' : 'saldo pos')
+});
 
 }
 
