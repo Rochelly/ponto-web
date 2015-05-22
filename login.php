@@ -1,4 +1,9 @@
 <?php
+/**
+ * @author [ESTÊVÃO SAMUEL PROCÓPIO AMARAL]
+ * @author [NEWTON KLEBER MACHADO SILVA]
+ * @version [1.10]
+ */
 require_once('dao/ldap/Ldap.php');
 require_once ('dao/ponto/Ponto.php');
 session_start();
@@ -7,9 +12,11 @@ $base_dn = 'dc=ufvjm,dc=edu,dc=br';
 $usuario = '';
 $msg = '';
 
+
+
 if (array_key_exists('login', $_POST)) {
 	$usuario = $_POST['login'];
-	//$usuario = 'arfonseca';
+/*	$usuario = 'gildasio.fernandes';*/
 	$conn = new Ldap();
 	$result = $conn->search($base_dn, "uid={$_POST['login']}", array('cn', 'employeeNumber'));
 
@@ -28,7 +35,9 @@ if (array_key_exists('login', $_POST)) {
 
 		$_SESSION['usuarioNome'] = $entry['cn'][0];
 		$_SESSION['siape'] = $entry['employeeNumber'][0];
-			/*$_SESSION['siape'] = '1956095'  ;*/
+	/*	$_SESSION['siape'] = '2827306';*/
+		//$_SESSION['siape'] = '1038407';
+		//$_SESSION['siape'] = '1956095';
 		$_SESSION['usuario']=$usuario;
 	
 		header('location: /ponto/index.php');

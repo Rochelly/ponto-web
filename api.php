@@ -23,7 +23,6 @@ function __autoload($c) {
 
 $siape = $_SESSION['siape'];
 $ponto = new Ponto;
-
 $func = substr($_SERVER['PATH_INFO'], 1);
 $args = explode('&', $_SERVER['QUERY_STRING']);
 $args = array_map(function ($item) {return end(explode('=', $item)); }, $args);

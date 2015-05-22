@@ -58,6 +58,10 @@ if(count($chefiaDepartamento)!=0){
 	<title>Registro Eletrônico de Ponto</title>
 </head>
 <body>
+
+ 
+
+
 	<div class="container-fluid">
 		<form id="ponto" method="get">
 			<!-- Menu Inicio-->
