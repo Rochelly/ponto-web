@@ -179,67 +179,26 @@ if(count($chefiaDepartamento)==0){
                                         <th width="80px">Saída 1</th>
                                         <th width="80px">Entrada 2</th>
                                         <th width="80px">Saída 2</th>
-
-
-                                        <?php
-
-                                        
-                                        $diaSemana = array('1' => 'Domingo','2' => 'Segunda-Feira','3'=>'Terça-Feria','4'=>'Quarta-Feira','5'=>'Quinta-Feria','6'=>'Sexta-Feira','7'=>'Sábado');
-                                        $horarios= $ponto->horarios($siape);
-
-
-                                        $entradasExtras =FALSE;
-                                        $entradasSabado =FALSE;
-
-                                        for ($i=0; $i <count($horarios) ; $i++) {
-                                            if ($horarios[$i]->entrada3!=null)
-                                                $entradasExtras= TRUE;
-                                        }
-
-                                        if ($horarios[6]->entrada1!=null) {
-                                            $entradasSabado=true;
-                                        }
-
-                                        if($entradasExtras){
-                                            echo "
-                                            <th width='80px'>Entrada 3</th>
-                                            <th width='80px'>Saída 3</th>
-                                            ";
-                                        }
-
-
-
-                                        ?>
-
+                                        <th width='80px'>Entrada 3</th>
+                                        <th width='80px'>Saída 3</th>
                                     </thead>
                                     <tbody>
                                         <?php
+                                        $diaSemana = array('1' => 'Segunda-Feira','2'=>'Terça-Feria','3'=>'Quarta-Feira','4'=>'Quinta-Feria','5'=>'Sexta-Feira','6'=>'Sábado','7' => 'Domingo');
+                                        $horarios= $ponto->horarios($siape);
 
-                                        for ($i=1; $i <count($horarios) ; $i++) {
-
-                                            if ($entradasSabado==false and $i>=6) {
-                                                break;
-                                            }
-
-                                            echo "<tr>";
-                                            echo" <td width='100px'>{$diaSemana[$horarios[$i]->dia_semana]}</th>";
-                                            echo" <td width='80px'>{$horarios[$i-1]->entrada1}</th>";
-                                            echo" <td width='80px'>{$horarios[$i-1]->saida1}</th>";
-                                            echo" <td width='80px'>{$horarios[$i-1]->entrada2}</th>";
-                                            echo" <td width='80px'>{$horarios[$i-1]->saida2}</th>";
-                                            if($entradasExtras){
-                                                echo" <td width='80px'>{$horarios[$i-1]->entrada3}</th>";
-                                                echo" <td width='80px'>{$horarios[$i-1]->saida3}</th>";
-                                            }
-
-                                            echo "</tr>";
+                                        for ($i=0; $i <count($horarios) ; $i++) {
+                                            echo"<tr>";
+                                            echo" <td width='100px'>{$diaSemana[($horarios[$i]->dia_semana)]}</th>";
+                                            echo" <td width='80px'>{$horarios[$i]->entrada1}</th>";
+                                            echo" <td width='80px'>{$horarios[$i]->saida1}</th>";
+                                            echo" <td width='80px'>{$horarios[$i]->entrada2}</th>";
+                                            echo" <td width='80px'>{$horarios[$i]->saida2}</th>";
+                                            echo" <td width='80px'>{$horarios[$i]->entrada3}</th>";
+                                            echo" <td width='80px'>{$horarios[$i]->saida3}</th>";
+                                            echo"</tr>";
                                         }
-
-
-
                                         ?>
-
-
                                     </tbody>
                                 </table>
                             </div>

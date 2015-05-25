@@ -16,7 +16,8 @@ $msg = '';
 
 if (array_key_exists('login', $_POST)) {
 	$usuario = $_POST['login'];
-/*	$usuario = 'gildasio.fernandes';*/
+/*	$usuario = 'claudio.heitor';*/
+/*	$usuario = 'arfonseca';*/
 	$conn = new Ldap();
 	$result = $conn->search($base_dn, "uid={$_POST['login']}", array('cn', 'employeeNumber'));
 
@@ -29,15 +30,15 @@ if (array_key_exists('login', $_POST)) {
 	* Informaçoes disponiveis na sessao:
 	* $_SESSION['usuarioNome'] --> Nome completo do Usuario (Fonte: Ldap)
    	* $_SESSION['siape']  -> SIAPE do servidor (Fonte: Ldap)
-	* $_SESSION['usuario'] ->  login do usuario (mesmo do E-mail institucional)
-	*/
+	* $_SESSION['usuario'] ->  login do usuario (mesmo do E-mail institucional)	
+	**/
 	if ($conn->bind($user_dn, $user_pw)) {
 
 		$_SESSION['usuarioNome'] = $entry['cn'][0];
 		$_SESSION['siape'] = $entry['employeeNumber'][0];
-	/*	$_SESSION['siape'] = '2827306';*/
-		//$_SESSION['siape'] = '1038407';
-		//$_SESSION['siape'] = '1956095';
+		$_SESSION['siape'] = '1646975';
+		$_SESSION['siape'] = '1038407';
+	/*	$_SESSION['siape'] = '1956095';*/
 		$_SESSION['usuario']=$usuario;
 	
 		header('location: /ponto/index.php');
