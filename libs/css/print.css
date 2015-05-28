@@ -6,6 +6,19 @@
        display: none;
 }
 
+#obs2 {
+  display: block;
+}
+
+
+textarea {
+  font-size: 11px;
+  color: #333333;
+  border: 1px solid #BBC5D9;
+  font-family: Arial, Helvetica, sans-serif;
+  padding: 3px;
+  overflow: hidden; 
+}
 
 
 * {

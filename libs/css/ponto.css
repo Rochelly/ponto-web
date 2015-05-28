@@ -29,6 +29,7 @@ ul.scroll-menu {
     box-shadow: none;
 }
 
+
 h2 {
   font-size: 1.4em;
 }
@@ -47,6 +48,12 @@ hr {
 
 .folga {
 	font-style: italic;
+}
+
+
+#obs2 {
+  display: none;
+
 }
 
 
