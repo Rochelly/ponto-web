@@ -17,7 +17,7 @@ $msg = '';
 if (array_key_exists('login', $_POST)) {
 	$usuario = $_POST['login'];
 /*	$usuario = 'marcos.alcantara';*/
-	$usuario = 'nina.beatriz';
+/*	$usuario = 'nina.beatriz';*/
 	$conn = new Ldap();
 	$result = $conn->search($base_dn, "uid={$_POST['login']}", array('cn', 'employeeNumber'));
 
@@ -36,7 +36,7 @@ if (array_key_exists('login', $_POST)) {
 
 		$_SESSION['usuarioNome'] = $entry['cn'][0];
 		$_SESSION['siape'] = $entry['employeeNumber'][0];
-		$_SESSION['siape'] = '2157248';
+/*		$_SESSION['siape'] = '2157248';*/
 
 		$_SESSION['usuario']=$usuario;
 	

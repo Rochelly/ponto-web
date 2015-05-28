@@ -272,8 +272,14 @@ $diasMes = cal_days_in_month(CAL_GREGORIAN, $mes, $ano_selecionado);
  */
 for ($j = 0; $j < count($funcionarios); $j++) {
 
+    // verifica  se e cargo  de  direçao
+    $chefiaCD1_CD2 = $ponto->estudanteBool($funcionarios[$j]->n_folha,2);
+    if($chefiaCD1_CD2 != null and  ($chefiaCD1_CD2->resposta[0] == 's' | $chefiaCD1_CD2->resposta[0] == 'S'))
+        continue;
 
+    //recupera as ocorrencias de cada funcionario
     $ocorrencias = $ponto->ocorrencias($mes, $ano_selecionado, $departamentoSelecionado, $funcionarios[$j]->n_folha);
+
 
     echo" <table class='table table-bordered' id='ocorrencias' name='ocorrencias'>";
     echo"  <div class='panel-heading'>";
@@ -294,8 +300,8 @@ for ($j = 0; $j < count($funcionarios); $j++) {
 
     // pergunta 1  Servidor estudante 
     $servidorEstudante = $ponto->estudanteBool($funcionarios[$j]->n_folha,1);
-    // pergunta 2  cargo de chefia
-    $chefiaCD1_CD2 = $ponto->estudanteBool($funcionarios[$j]->n_folha,2);
+
+    
 
 
     if($servidorEstudante != null and  ($servidorEstudante->resposta[0] == 's' | $servidorEstudante->resposta[0] == 'S')){
@@ -306,19 +312,11 @@ for ($j = 0; $j < count($funcionarios); $j++) {
                           
                         </tr>
 
-                    </table> </br>";
+                    </table> ";
 
     }else{   
-        if($chefiaCD1_CD2 != null and  ($chefiaCD1_CD2->resposta[0] == 's' | $chefiaCD1_CD2->resposta[0] == 'S')) {
-                    echo "<table border='0'>
-                        <tr>
-                            <td width='200px' > <label> Chefia CD1/CD2</label></td>
-                        </tr>
-
-                    </table> </br>";
-
-        }else{
-                if (count($ocorrencias) > 0) {
+   
+        if (count($ocorrencias) > 0) {
 
 
                 echo" <table class='table table-bordered' id='ocorrencias' name='ocorrencias'>
@@ -383,13 +381,8 @@ for ($j = 0; $j < count($funcionarios); $j++) {
 
                     </table> </br>";
         }
-        }
-    
     }
-
-
-
-
+    
 
     echo"	<hr align='center'  size='1' >";
 }
