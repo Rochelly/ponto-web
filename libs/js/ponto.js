@@ -32,13 +32,13 @@ function converteMinutosEmHoras(minutos) {
         else
             return horas.toString() + ':0' + minutos.toString();
     } else {
-        minutos = minutos * (-1);
+          minutos = minutos * (-1);
         var horas = parseInt(minutos / 60, 10);
         var minutos = minutos - horas * 60;
         if (minutos >= 10)
             return '-' + horas.toString() + ':' + minutos.toString();
         if (minutos == 0)
-            return horas.toString() + ':' + minutos.toString() + '0';
+            return '-'+ horas.toString() + ':' + minutos.toString() + '0';
         else
             return '-' + horas.toString() + ':0' + minutos.toString();
     }
@@ -137,11 +137,11 @@ function verificaOcorrencia(marcacao){
                 return true;
 
             return false;
-        }
+}
 
-        function diferencaEntreHoras(entrada2 ,saida1 ) {
+function diferencaEntreHoras(entrada2 ,saida1 ) {
     // saidaTempo = [saida1 convertida  em minutos]
-    //
+
 
 
 
@@ -161,32 +161,34 @@ function verificaOcorrencia(marcacao){
 
 // -----------------Componentes Visuais --------------------------------------------------------------------------
 
-function sumario(mes,ano,minutosDescontadosMes){
-    /**
+function sumario(mes,ano,minutosDescontadosMes,cargaHorariaTotal,minutosTrabalhadosMes,lastDay){
+             /**
              Período: 01/05/2015 a 31/05/2015
              Carga Horária: 104:00
              Horas Trabalhadas: 80:23
              Extras/Atraso: -79:40
              Ultima Atualizacao: 20/05/2015 13:15
              */
-             $.get('/ponto/api.php/sumario?mes=' + mes + '&ano=' + ano, function(data, status) {
-        // se  nao houver data de marcaçoa  entao  nao existe marcaçao
-        if (data.periodo == null)
-            alert('Não consta nenhuma marcação neste mês!');
+        mes  = (mes < 10) ? "0" + mes : mes.toString(); //  ex :  mes 3 convertido para 03
+        var periodo = '01/'+mes.toString()+"/"+ano.toString()+" - " + lastDay.toString()+"/"+mes.toString()+"/"+ano.toString();
+         
         //Preenchendo o sumario
-        data.periodo != undefined ? $("#periodo").text(data.periodo) : $("#periodo").text("");
-        data.carga_horaria != undefined ? $("#carga_horaria").text(data.carga_horaria) : $("#carga_horaria").text("");
-        data.horas_trabalhadas != null ? $("#horas_trabalhadas").text(data.horas_trabalhadas) : $("#horas_trabalhadas").text("");
-        saldoComDesconto = data.saldo;
-        saldoComDesconto = parseInt(saldoComDesconto, 10);
+        periodo != undefined ? $("#periodo").text(periodo) : $("#periodo").text("");
+        cargaHorariaTotal != undefined ? $("#carga_horaria").text(converteMinutosEmHoras(cargaHorariaTotal)) : $("#carga_horaria").text("");
+        minutosTrabalhadosMes  != null ? $("#horas_trabalhadas").text(converteMinutosEmHoras(minutosTrabalhadosMes- minutosDescontadosMes)) : $("#horas_trabalhadas").text("");
+        saldoComDesconto =  (minutosTrabalhadosMes - minutosDescontadosMes) - cargaHorariaTotal;
+
+        if (converteMinutosEmHoras(cargaHorariaTotal) == '0:00') {
+            alert('Não consta nenhuma marcação neste mês!');
+        }
+       
         //realiza o desconto de dias  nao  trabalhados e minutos a menos na horas do almoço
-        if (data.saldo != null)
-            saldoComDesconto = converteMinutosEmHoras(converteHorasEmMinutos(data.saldo) - minutosDescontadosMes);
-        data.saldo != null ? $("#saldo").text(saldoComDesconto) : $("#saldo").text("");
+        saldoComDesconto = converteMinutosEmHoras(saldoComDesconto);
+        saldoComDesconto != null ? $("#saldo").text(saldoComDesconto) : $("#saldo").text("");
         $("#saldo").removeClass('saldo pos neg');
-        if (data.saldo)
+        if (saldoComDesconto)
             $("#saldo").addClass(saldoComDesconto[0] == '-' ? 'saldo neg' : 'saldo pos');
-    });
+
 }
 
 function cabecalhoTabelaMarcacoes(terceiraMarcacao){
@@ -204,6 +206,7 @@ function cabecalhoTabelaMarcacoes(terceiraMarcacao){
     }
     thead.append($('<th>', {html: '<center>Horas Trabalhadas'}));
     thead.append($('<th>', {html: '<center>Saldo'            }));
+    thead.append($('<th>', {html: '<center>Ajuste'            }));
 }
 
 function corpoTabelaMarcacoes(mes,ano,batidas, feriados, terceiraMarcacao,horarios) {
@@ -211,16 +214,15 @@ function corpoTabelaMarcacoes(mes,ano,batidas, feriados, terceiraMarcacao,horari
     var minutosDescontadosDia = 0;
     var minutosDescontadosMes = 0;
     var cargaHorariaTotalMes  = 0;
-    var saldoTotalMes         = 0;
-
-
-    cabecalhoTabelaMarcacoes(terceiraMarcacao);
+    var minutosTrabalhadosMes   = 0;
+    var cargaHoraria = calculoCargaHoraria(horarios);
 
     var tbody = $('#marcacao tbody');
     tbody.html('');
 
+    cabecalhoTabelaMarcacoes(terceiraMarcacao);
 
-            {   // dataAtual: Recupera  a de  hoje para highlighted do dia
+            {// dataAtual: Recupera  a de  hoje para highlighted do dia
                 dataAtual = new Date();
                 diaAtual  = dataAtual.getDate(); // dia de hoje
                 mesAtual  = dataAtual.getMonth() + 1; // mes de hoje
@@ -229,230 +231,228 @@ function corpoTabelaMarcacoes(mes,ano,batidas, feriados, terceiraMarcacao,horari
                 diaAtual  = (diaAtual < 10) ? '0' + diaAtual : diaAtual.toString(); //  ex :  dia 1 convertido para 01
                 dataAtual = diaAtual + "/" + mesAtual + "/" + anoAtual; // converte a data atual para o seguinte fomato : dd/mm/aa
             }
-
             var lastDay = (new Date(ano, mes, 0)).getDate(); // lastDay :  numero de quantidade de  dias do mes selecionado
+
             /**for   roda o  numero  de dias do  mes]
              * @param  {int} dia      [quantidade de dias do mes]
              * @param  {int} i        [quantidade  de objetos(instancias da  consulta do banco )]
              * @param  {int} lastDay  [lastDay :  numero de quantidade de  dias do mes selecionado]
-             */
+             */         
              for (dia = 1, i = 0; dia <= lastDay; dia++) {
+
 
                 var str_mes = (mes < 10) ? "0" + mes : mes;
                 var str_dia = (dia < 10) ? '0' + dia : dia.toString();
                 var datames = str_dia + "/" + str_mes + "/" + ano; // datames: em cada iteraçao recebe  a data de um  dia trabalhado]
 
                 var trFolga = $('<tr class="success">');  // [trFolga tag para a marcaçao do final de semana e feriados ]
-                var tr = $('<tr>');
+                var trFalta = $('<tr class="danger">'); //marca as faltas
+                var trHoje  = $('<tr class="hoje">'); //  marca o  dia de  hoje
+                var tr      = $('<tr>'); // tr geral
+
                 if (datames == dataAtual) //if highlighted para o  dia de  hoje]
-                    tr = $('<tr class="hoje">');
+                    tr = trHoje;
+                
+                if (i < batidas.length && batidas[i].bdata == datames) {// [if adicona somente as  batidas ate o  dia atual]
 
-                // [if adicona somente as  batidas ate o  dia atual]
-                if (i < batidas.length && batidas[i].bdata == datames) {
-
-                    var falta = false;
-                    var fimDeSemana = false ;
-                    var feriadoBool = false;
-                    var texto = '<center>--:--</center>';
+                    var faltaBool        = false;
+                    var fimDeSemanaBool  = false ;
+                    var feriadoBool      = false;
+                    var texto        = '<center>--:--</center>';
                     var dataCorrente = new Date(ano, mes - 1, dia);// dataCorrente: a data corrente no loop
+                    var feriado      = feriados.filter(function(item) { return item.data == datames; });
 
-                    if (dataCorrente.getUTCDay() == 0) {
-                        texto = '<center><span class="folga">Domingo</span>';
-                        tr = trFolga;
-                        fimDeSemana = true;
-                    }
-                    if (dataCorrente.getUTCDay() == 6) {
-                        texto = '<center><span class="folga">Sábado</span>';
-                        tr = trFolga;
-                        fimDeSemana = true;
+                    {//verifica se o dia o dia e feriado ou  fim de semana
+                        if (feriado.length) { //verifica se existe feriado nesse dia
+                            texto       = '<center><span class="folga" title="' + feriado[0].descricao + '">Feriado</span></center>';
+                            tr          = trFolga;
+                            feriadoBool = true;
+                        }
+                        if (dataCorrente.getUTCDay() == 0) {//verifica se o dia  e domingo
+                            texto = '<center><span class="folga">Domingo</span>';
+                            tr = trFolga;
+                            fimDeSemanaBool = true;
+                        }
+                        if (dataCorrente.getUTCDay() == 6) {//verifica se o dia e Sabado
+                            texto = '<center><span class="folga">Sábado</span>';
+                            tr = trFolga;
+                            fimDeSemanaBool = true;
+                        }
+                        if (batidas[i].bentrada1 == null && batidas[i].bentrada2 == null && batidas[i].bentrada3 == null && fimDeSemanaBool == false &&  feriadoBool == false){// verifica se o funcionario faltou e realizao desconto da falta
+                            faltaBool = true;
+                            tr = trFalta;
+                            minutosDescontadosDia = minutosDescontadosDia + 480;
+                        }
                     }
 
-                    var feriado = feriados.filter(function(item) {
-                            return item.data == datames;
-                        });
-
-                    if (feriado.length) {
-                         texto = '<center><span class="folga" title="' + feriado[0].descricao + '">Feriado</span></center>';
-                        tr = trFolga;
-                        feriadoBool = true;
-                    }
-                    if (batidas[i].bentrada1 == null && fimDeSemana == false &&  feriadoBool == false){
-                        falta = true;
-                        minutosDescontadosDia = minutosDescontadosDia + 480;
+                    if (feriadoBool == false && fimDeSemanaBool ==  false && verificaOcorrencia(batidas[i])== false) {
+                       cargaHorariaTotalMes +=  converteHorasEmMinutos(cargaHoraria[dataCorrente.getUTCDay()]); 
                     }
 
                     tr.append($('<td>', {html: '<center>' + datames}));
-                    /**
-                     * [if description] caso nao tenha a entrada1 entao
-                     * @param  {[type]} batidas[i].bentrada1 [description]
-                     * @return {[type]}                      [description]
-                     */
-
-                    // verifica se o funcionario faltou e realizao desconto da falta
-
-
                     tr.append($('<td>', {html: batidas[i].bentrada1 == null ? texto : '<center><span title=' + batidas[i].eentrada1 + '>' + batidas[i].bentrada1.replace('_', '') + '</span>'}));
-
                     // verificando se  o funcionario fez menos de uma hora de almoço
                     if ((batidas[i].bsaida1 != null) && (batidas[i].bentrada2 != null) && (diferencaEntreHoras(batidas[i].bsaida1, batidas[i].bentrada2) < 60)) {
                         tr.append($('<td>', {html: batidas[i].bsaida1 == null ? texto : '<center><span class="saldo neg" title=Menos_de_uma_hora_de_almoço:_' + batidas[i].esaida1 + '>' + batidas[i].bsaida1.replace('_', '') + '</span>'}));
                         tr.append($('<td>', {html: batidas[i].bentrada2 == null ? texto : '<center><span class="saldo neg" title= Menos_de_uma_hora_de_almoço:_' + batidas[i].eentrada2 + '>' + batidas[i].bentrada2.replace('_', '') + '</span>'}));
                         minutosDescontadosDia = 60 - diferencaEntreHoras(batidas[i].bsaida1, batidas[i].bentrada2);
-                        minutosDescontadosMes = minutosDescontadosMes + minutosDescontadosDia;
+                        minutosDescontadosMes += minutosDescontadosDia;
                     }
                     else {// hora de almoço correnta
                         tr.append($('<td>', {html: batidas[i].bsaida1 == null ? texto : '<center><span title=' + batidas[i].esaida1 + '>' + batidas[i].bsaida1.replace('_', '') + '</span>'}));
                         tr.append($('<td>', {html: batidas[i].bentrada2 == null ? texto : '<center><span title=' + batidas[i].eentrada2 + '>' + batidas[i].bentrada2.replace('_', '') + '</span>'}));
                         minutosDescontadosDia = 0;
-                        minutosDescontadosMes = minutosDescontadosMes + minutosDescontadosDia;
+                        minutosDescontadosMes += minutosDescontadosDia;
                     }
+
                     tr.append($('<td>', {html: batidas[i].bsaida2 == null ? texto : '<center><span title=' + batidas[i].esaida2 + '>' + batidas[i].bsaida2.replace('_', '') + '</span>'}));
-                    /**
-                     * [if confere se o funcionario possui uma  terceira marcaçao de ponto no mes]
-                     * @param terceiraMarcacao.quantidade>0 [quantidade de  vezes de terceiras marcaçao ]
-                     */
-                     if (terceiraMarcacao.quantidade > 0) {
+        
+                    if (terceiraMarcacao.quantidade > 0) {//[if confere se o funcionario possui uma  terceira marcaçao de ponto no mes]
                         tr.append($('<td>', {html: batidas[i].bentrada3 == null ? texto : '<center><span title=' + batidas[i].eentrada2 + '>' + batidas[i].bentrada3.replace('_', '')   + '</span>'}));
                         tr.append($('<td>', {html: batidas[i].bsaida3   == null ? texto : '<center><span title=' + batidas[i].esaida2   + '>' + batidas[i].bsaida3.replace('_', '')     + '</span>'}));
                     }
 
-                    // Coluna de  horas Trabalhadas
-                    tr.append($('<td>', {html: batidas[i].horas_trabalhadas == null  ? texto : '<center>' + converteMinutosEmHoras(calculaSaldoDiario(batidas[i]))}));
-
-                    if (falta) {
+                    //Coluna de horas Trabalhadas
+                    if (faltaBool){//caso seja identificado falta coloca menos
+                        minutosDescontadosMes += 480;
+                        tr.append($('<td>', {html: texto}));
                         tr.append($('<td>', {html: '<center><span class="saldo neg"> -8:00</span>'}));
+                        tr.append($('<td>', {html: '<center><span > --:--</span>'}));
+                       
                     }else{
-
                         var minutosTrabalhadosComDesconto = calculaSaldoDiario(batidas[i]) - minutosDescontadosDia ;
-                        var cargaHoraria = calculoCargaHoraria(horarios);
+                      
+                        minutosTrabalhadosMes += calculaSaldoDiario(batidas[i]);
 
                         if (!verificaOcorrencia(batidas[i]) &&  minutosTrabalhadosComDesconto != 0) {
+                            tr.append($('<td>', {html: calculaSaldoDiario(batidas[i]) == null  ? texto : '<center>' + converteMinutosEmHoras(calculaSaldoDiario(batidas[i]))}));
 
-                           var saldoDiarioEmHoras = converteMinutosEmHoras(diferencaEntreHoras(cargaHoraria[dataCorrente.getUTCDay()],converteMinutosEmHoras(minutosTrabalhadosComDesconto)));
+                            var saldoMinutos = diferencaEntreHoras(cargaHoraria[dataCorrente.getUTCDay()],converteMinutosEmHoras(minutosTrabalhadosComDesconto))
+                            var saldoDiarioEmHoras = converteMinutosEmHoras(saldoMinutos);
 
-                           if (saldoDiarioEmHoras[0] == "-")
-                               tr.append($('<td>', {html: '<center><span class="saldo neg">' + saldoDiarioEmHoras + '</span>'}));
-                           else
+                            if (saldoDiarioEmHoras[0] == "-")
+                                tr.append($('<td>', {html: '<center><span class="saldo neg">' + saldoDiarioEmHoras + '</span>'}));
+                            else
                                 tr.append($('<td>', {html: '<center><span class="saldo pos">' + saldoDiarioEmHoras + '</span>'}));
+                        }
+                        else{
+                            tr.append($('<td>', {html: texto}));
+                            if(feriadoBool | fimDeSemanaBool)
+                                tr.append($('<td>', {html: texto}));
+                            else
+                                tr.append($('<td>', {html: texto}));
+                        }
+                        
+                        if(batidas[i].bajuste != '0:00'){         
+                            minutosDescontadosMes -= converteHorasEmMinutos(batidas[i].bajuste);
+                            if(batidas[i].bajuste[0] == '-')
+                                tr.append($('<td>', {html: "<center><span  title='"+batidas[i].obs +"'class='saldo neg'>" + batidas[i].bajuste + '</span>'}));
+                            else
+                                tr.append($('<td>', {html: "<center><span  title='"+batidas[i].obs +"'class='saldo pos'>+" + batidas[i].bajuste + '</span>'}));
+                        }
+                        else{
+                            tr.append($('<td>', {html: texto}));
+                        }
+                
+
                     }
-                    else
-                        if(feriadoBool | fimDeSemana)
-                             tr.append($('<td>', {html: texto}));
-                         else
-                            tr.append($('<td>', {html: '<center> 0:00'}));
+                    tbody.append(tr);
+                    i++;
                 }
+            else {//marcaçoes depois da ultima batida do  mes, ou dia que nao  tem batida
+               var texto = '<center>--:--</center>';
+               var fimDeSemanaBool = false;
+               var feriadoBool     = false;
+               var falta           = false;
 
+                     var dataLoop = new Date(ano, mes - 1, dia); //[hoje uma data para dia do mes  para se  comparar se  o dia e sabado ou  domingo ]
+                     var hoje     = new Date(anoAtual, mesAtual - 1, diaAtual); // data de hoje, para se saber se  a data da marcaçao ja passou
+                     var feriado  = feriados.filter(function(item) { return item.data == datames; }); //feriado do  dia se existi
 
-                tbody.append(tr);
-                i++;
-            }
-            else {
-                    /**
-                     *  Se  a data  criada no loop nao  estiver na tabela batidas
-                     *  pode ser por  3  motivos :
-                     *  Feriado
-                     *  Fim de Semana
-                     *  Falta do servidor no fim  do  mes,
-                     */
-                     var texto = '<center>--:--</center>';
-                     var fimDeSemanaBool = false;
-                     var feriadoBool = false;
-                     var hoje = new Date(ano, mes - 1, dia);
-                     var dataHAtual = new Date(anoAtual, mesAtual - 1, diaAtual);
-                     var falta = false;
-                    /**
-                     * [description]    retorna o feriado se  existir
-                     * @param  {[type]} item) {return item.data [feriado]
-                     * @return {[type]}       [data]
-                     */
-                     var feriado = feriados.filter(function(item) {
-                        return item.data == datames;
-                    });
-
-                     if (feriado.length) {
+                    if (feriado.length) {// caso exista feriado
                         texto = '<center><span class="folga" title="' + feriado[0].descricao + '">Feriado</span></center>';
                         tr = trFolga;
                         feriadoBool = true;
-                    }
-                    //[hoje( hoje e hoje)   uma data para dia do mes  para se  comparar se  o dia e sabado ou  domingo ]
-                    if (hoje.getUTCDay() == 0) {
+                    }                    
+                    if (dataLoop.getUTCDay() == 0) {//verifica se e domingo
                         texto = '<center><span class="folga">Domingo</span>';
                         tr = trFolga;
                         fimDeSemanaBool = true;
                     }
-                    if (hoje.getUTCDay() == 6) {
+                    if (dataLoop.getUTCDay() == 6) {//verifica se e Sabado
                         texto = '<center><span class="folga">Sábado</span>';
                         tr = trFolga;
                         fimDeSemanaBool = true;
                     }
-
-                    tr.append($('<td>', {html: '<center>' + datames})); // Data
-                    tr.append($('<td>', {html: texto})); // Entrada 1
-                    tr.append($('<td>', {html: texto})); // Saida 1
-                    tr.append($('<td>', {html: texto})); // Entrada 2
-                    tr.append($('<td>', {html: texto})); // Saida 2
-                    if (terceiraMarcacao.quantidade > 0) {
-                        tr.append($('<td>', {html: texto})); // Entrada 3
-                        tr.append($('<td>', {html: texto})); // Saida3
-                    }
-                    tr.append($('<td>', {html: texto})); // Horas Trabalhadas
-
-                    // [if   se  a  data  que esta no loop for  menor que a data de hoje entao  a marcao  dever  ser debitada
-                    if (dataHAtual > hoje) {
-                        /**
-                         * [if description] para  descontar nao pode ser feriado ou  fim  de semana
-                         * e ao mesmo tempo nao desconta nos meses : janeiro, fevereiro, março do ano  de 2015
-                         */
-                         if (!(fimDeSemanaBool | feriadoBool) && (!((mes == '1' | mes == '2' | mes == '3') && ano == '2015'))) {
+                    if (hoje > dataLoop) {// [if   se  a  data  que esta no loop for  menor que a data de hoje entao  a marcao  dever  ser debitada
+                        if (!(fimDeSemanaBool | feriadoBool) && (!((mes == '1' | mes == '2' | mes == '3') && ano == '2015'))) {//                         // description para  descontar nao pode ser feriado ou  fim  de semana e ao mesmo tempo nao desconta nos meses : janeiro, fevereiro, março do ano  de 2015
+                            cargaHorariaTotalMes +=  converteHorasEmMinutos(cargaHoraria[dataCorrente.getUTCDay()]); 
                             falta = true;
+                            tr    = trFalta;
                             minutosDescontadosMes = minutosDescontadosMes + 480;
                         }
-
                     }
-                    /*se e falta marca com menos -8 horas*/
-                    if (falta == true)
+                        tr.append($('<td>', {html: '<center>' + datames})); // Data
+                        tr.append($('<td>', {html: texto}));                // Entrada 1
+                        tr.append($('<td>', {html: texto}));                // Saida 1
+                        tr.append($('<td>', {html: texto}));                // Entrada 2
+                        tr.append($('<td>', {html: texto}));                // Saida 2
+                    if (terceiraMarcacao.quantidade > 0) {                  // Verifica se existe terceira marcaçao
+                        tr.append($('<td>', {html: texto}));                // Entrada 3
+                        tr.append($('<td>', {html: texto}));                // Saida3
+                    }
+                        tr.append($('<td>', {html: texto}));                // Horas Trabalhadas
+                       
+                    if (falta == true){ //se e falta marca com menos -8 horas
                         tr.append($('<td>', {html: '<center><span class="saldo neg"> -8:00</span>'})); // Saldo
-                    else
+                        tr.append($('<td>', {html: texto}));   
+                    }
+                    else{
                         tr.append($('<td>', {html: texto})); // Saldo
+                        tr.append($('<td>', {html: texto}));   
+                    }
+
+       
 
                     tbody.append(tr);
                 }
-
             }//  fim do loop que lista as  marcaçoes
 
-            // cria o sumario
-            sumario(mes,ano,minutosDescontadosMes);
+            sumario(mes,ano,minutosDescontadosMes,cargaHorariaTotalMes,minutosTrabalhadosMes,lastDay);// cria o sumario
+            
         }
 
         function legendaOcorrencias(mes,ano){
             $.get('/ponto/api.php/legendas?mes=' + mes + '&ano=' + ano, function(data, status) {
-        //Titulo da tabela de legendas
-        var caption = $("#legenda  caption");
-        caption.html('');
-        //cabeçalho da tabela de legendas
-        var thead = $("#legenda thead");
-        thead.html('');
-        // corpo da tabela de legendas
-        var tbody = $("#legenda  tbody");
-        tbody.html('');
-        /**
-        * [if description] verifica se existe alguma ocorrencia lançada
-        * para a criaçao da  tabela de  legendas
-        */
-        if (data && data.length) {
-            //adiciona o  cabeçalho  da legenda
-            caption.append("<h2>Legenda:</h2>");
-            thead.append($('<th>', {html: '<center>   Código </center>  '}));
-            thead.append($('<th>', {html: '<center>Descrição'}));
-            //preenche  a legenda com os codigos e descriçoes
-            for (var i = 0; i < data.length; i++) {
-                var nome = data[i].nome;
-                var descricao = data[i].descricao;
-                var tr = "<tr><td>" + nome + "</td><td>" + descricao + "</td></tr>";
-                thead.append(tr);
+
+            console.log(data);
+            //Titulo da tabela de legendas
+            var caption = $("#legenda  caption");
+            caption.html('');
+            //cabeçalho da tabela de legendas
+            var thead = $("#legenda thead");
+            thead.html('');
+            // corpo da tabela de legendas
+            var tbody = $("#legenda  tbody");
+            tbody.html('');
+            /**
+            * [if description] verifica se existe alguma ocorrencia lançada
+            * para a criaçao da  tabela de  legendas
+            */
+            if (data && data.length) {
+                //adiciona o  cabeçalho  da legenda
+                caption.append("<h2>Legenda:</h2>");
+                thead.append($('<th>', {html: '<center>   Código </center>  '}));
+                thead.append($('<th>', {html: '<center>Descrição'}));
+                //preenche  a legenda com os codigos e descriçoes
+                for (var i = 0; i < data.length; i++) {
+                    var nome = data[i].nome;
+                    var descricao = data[i].descricao;
+                    var tr = "<tr><td>" + nome + "</td><td>" + descricao + "</td></tr>";
+                    thead.append(tr);
+                }
             }
-        }
-    });
+        });
 }
 
 function efeitoCollapse(){
@@ -465,7 +465,7 @@ function efeitoCollapse(){
     $('#imprimir').click(function(event){
         event.preventDefault();
         var observacao = $('#obs').val();
-  /*      $('#obs2').val(observacao);*/
+        /*      $('#obs2').val(observacao);*/
         $("#obs2").html("<pre><p >"+ observacao+"</p></pre>" );
         window.print();
 
@@ -506,9 +506,6 @@ function atualiza(e){
     var ano = $('#ano').val();
     legendaOcorrencias(mes,ano);
     get_dados_mes(mes, ano,corpoTabelaMarcacoes);
-
-
-
 }
 
 $(document).ready(function() {

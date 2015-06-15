@@ -75,10 +75,6 @@ if (count($chefiaDepartamento) == 0) {
     </head>
     <body>
 
-
-
-
-
         <div class="container-fluid">
 
             <form id="ponto" method="get">
@@ -117,18 +113,18 @@ if (count($chefiaDepartamento) == 0) {
                     <!-- Select Mes Inicio -->
                     <div class="col-md-2">
                         <select id="mes" name="mes" class="form-control" onchange="this.form.submit()">
-<?php
-$meses = array('', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro');
-$mes = array_key_exists('mes', $_GET) ? $_GET['mes'] : date('n');
-var_dump($mes);
+                            <?php
+                            $meses = array('', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro');
+                            $mes = array_key_exists('mes', $_GET) ? $_GET['mes'] : date('n');
+                            var_dump($mes);
 
-for ($i = 1; $i < 13; $i++) {
-    if ($i == $mes)
-        echo "<option value='{$i}' selected='selected'>{$meses[$i]}</option>";
-    else
-        echo "<option value='{$i}'>{$meses[$i]}</option>";
-}
-?>
+                            for ($i = 1; $i < 13; $i++) {
+                                if ($i == $mes)
+                                    echo "<option value='{$i}' selected='selected'>{$meses[$i]}</option>";
+                                else
+                                    echo "<option value='{$i}'>{$meses[$i]}</option>";
+                            }
+                            ?>
                         </select>
                     </div>
                     <!-- Select Mes Fim -->
@@ -137,18 +133,18 @@ for ($i = 1; $i < 13; $i++) {
                     <!-- Select Ano Incio -->
                     <div class="col-md-2">
                         <select id="ano" name="ano" class="form-control">
-<?php
-$ano_atual = date('Y');
-$ano_selecionado = array_key_exists('ano', $_GET) ? $_GET['ano'] : $ano_atual;
-$ano = array_key_exists('ano', $_GET) ? $_GET['ano'] : date('n');
+                            <?php
+                            $ano_atual = date('Y');
+                            $ano_selecionado = array_key_exists('ano', $_GET) ? $_GET['ano'] : $ano_atual;
+                            $ano = array_key_exists('ano', $_GET) ? $_GET['ano'] : date('n');
 
-for ($i = 2015; $i <= $ano_atual; $i++) {
-    if ($i == $ano_selecionado)
-        echo "<option value='{$i}' selected='selected'>{$i}</option>";
-    else
-        echo "<option value='{$i}'>{$i}</option>";
-}
-?>
+                            for ($i = 2015; $i <= $ano_atual; $i++) {
+                                if ($i == $ano_selecionado)
+                                    echo "<option value='{$i}' selected='selected'>{$i}</option>";
+                                else
+                                    echo "<option value='{$i}'>{$i}</option>";
+                            }
+                            ?>
                         </select>
 
 
@@ -161,53 +157,52 @@ for ($i = 2015; $i <= $ano_atual; $i++) {
                 </div>
                 <center>
 
-<?php
-/**
- * [$departamentoSelecionado  id do  departamento  que  esta selecionado]
- * @var int
- */
-$departamentoSelecionado = array_key_exists('departamento', $_GET) ? $_GET['departamento'] : $chefiaDepartamento[0]->departamento_id;
+                    <?php
+                    /**
+                     * [$departamentoSelecionado  id do  departamento  que  esta selecionado]
+                     * @var int
+                     */
+                    $departamentoSelecionado = array_key_exists('departamento', $_GET) ? $_GET['departamento'] : $chefiaDepartamento[0]->departamento_id;
 
-/**
- * [$departamentos  array  com todos os  departamentos da chefia, o indice e o codigo do departamento]
- * @var array
- */
-$departamentos = array();
-for ($i = 0; $i < count($chefiaDepartamento); $i++) {
+                    /**
+                     * [$departamentos  array  com todos os  departamentos da chefia, o indice e o codigo do departamento]
+                     * @var array
+                     */
+                    $departamentos = array();
+                    for ($i = 0; $i < count($chefiaDepartamento); $i++) {
 
-    $departamentos[$chefiaDepartamento[$i]->departamento_id] = $chefiaDepartamento[$i]->descricao;
-}
-?>
+                        $departamentos[$chefiaDepartamento[$i]->departamento_id] = $chefiaDepartamento[$i]->descricao;
+                    }
+                    ?>
                     <div class="row">
                         <div class="col-md-4"></div>
                         <div class="col-md-3">
                             <select id="departamento" name="departamento" class="form-control" onchange="this.form.submit()">
-                    <?php
-                    for ($i = 0; $i < count($chefiaDepartamento); $i++) {
-                        echo "<option value='{$chefiaDepartamento[$i]->departamento_id }'" . (($chefiaDepartamento[$i]->departamento_id == $departamentoSelecionado) ? " selected = 'selected'" : "") .
-                        ">{$chefiaDepartamento[$i]->descricao }</option>";
-                    }
-                    ?>
+                                <?php
+                                for ($i = 0; $i < count($chefiaDepartamento); $i++) {
+                                    echo "<option value='{$chefiaDepartamento[$i]->departamento_id }'" . (($chefiaDepartamento[$i]->departamento_id == $departamentoSelecionado) ? " selected = 'selected'" : "") .
+                                    ">{$chefiaDepartamento[$i]->descricao }</option>";
+                                }
+                                ?>
                             </select>
                         </div>
                     </div>
                     <!-- 
-                            Cabeçalho para a impressao
 
                     -->
                     <div id='imagens' name=''>
                         <center>
                             <img src="/ponto/img/cabecalho.png"  align="left"  />
-<?php
-echo "<strong><h2>";
-echo strtoupper(strtr("{$departamentos[$departamentoSelecionado]}
+                            <?php
+                            echo "<strong><h2>";
+                            echo strtoupper(strtr("{$departamentos[$departamentoSelecionado]}
 					</br> Boletim De Frequência
 				</br>
 				$meses[$mes] / $ano_selecionado
 				", "áéíóúâêôãõàèìòùç", "ÁÉÍÓÚÂÊÔÃÕÀÈÌÒÙÇ"));
-echo "</h2></strong>";
-echo "</center>";
-?>
+                            echo "</h2></strong>";
+                            echo "</center>";
+                            ?>
 
 
                     </div>
@@ -218,24 +213,24 @@ echo "</center>";
                     <div class="col-md-6">
                         <div class='panel panel-default' id='tabela3' name='tabela3'>
                             <div class='panel-heading'  id='tabela3' name='tabela3' >
-<?php
-echo "Chefe:         <label>{$_SESSION['usuarioNome']}</label>";
-echo "<button  id = 'imprimir'style='float: right;' type='button' class='btn btn-info' '>
+                                <?php
+                                echo "Chefe:         <label>{$_SESSION['usuarioNome']}</label>";
+                                echo "<button  id = 'imprimir'style='float: right;' type='button' class='btn btn-info' '>
 							Imprimir Relatório
 						</button> ";
-echo "<br>";
-echo "Departamento: <label>{$departamentos[$departamentoSelecionado]}</label>";
-?>
+                                echo "<br>";
+                                echo "Departamento: <label>{$departamentos[$departamentoSelecionado]}</label>";
+                                ?>
                             </div>
                             <div id="dadosServidor" class="panel-body"  name="tabela3" >
                                 <?php
-                                $sumario = $ponto->sumario($siape, $mes, $ano_selecionado);
-                                //     var_dump($sumario);
+                         
 
                                 $update = $ponto->ultima_atualizacao();
-                                echo "Período: <span id='periodo'>{$sumario->periodo}</span>";
-                                echo "</br>";
-                                echo "Ultima Atualizacao: <span id='update'>{$update}</span>";
+                                echo "<div>Período: <span id='periodo'></span></div>";
+                              
+                           
+                
                                 ?>
 
 
@@ -249,77 +244,74 @@ echo "Departamento: <label>{$departamentos[$departamentoSelecionado]}</label>";
 
 
 
-<?php
-echo"<div class='panel panel-default'>";
-/**
- * [$funcionarios  retorna  o SIAPE de todos os  funcionarios) de um departamento]
- * @var [type]
- * 	@var [type] [description]
- */
-$funcionarios = $ponto->funcionariosDep($departamentoSelecionado);
+                        <?php
+                        echo"<div class='panel panel-default'>";
+                        /**
+                         * [$funcionarios  retorna  o SIAPE de todos os  funcionarios) de um departamento]
+                         * @var [type]
+                         * 	@var [type] [description]
+                         */
+                        $funcionarios = $ponto->funcionariosDep($departamentoSelecionado);
 
 
-/**
- * [$diasMes numero de dias do mes]
- * @var [int]
- */
-$diasMes = cal_days_in_month(CAL_GREGORIAN, $mes, $ano_selecionado);
+                        /**
+                         * [$diasMes numero de dias do mes]
+                         * @var [int]
+                         */
+                        $diasMes = cal_days_in_month(CAL_GREGORIAN, $mes, $ano_selecionado);
 
 
-/**
- * [$j   funcionarios de  um setor]
- * @var integer
- */
-for ($j = 0; $j < count($funcionarios); $j++) {
+                        /**
+                         * [$j   funcionarios de  um setor]
+                         * @var integer
+                         */
+                        for ($j = 0; $j < count($funcionarios); $j++) {
 
-    // verifica  se e cargo  de  direçao
-    $chefiaCD1_CD2 = $ponto->estudanteBool($funcionarios[$j]->n_folha,2);
-    if($chefiaCD1_CD2 != null and  ($chefiaCD1_CD2->resposta[0] == 's' | $chefiaCD1_CD2->resposta[0] == 'S'))
-        continue;
+                            // verifica  se e cargo  de  direçao
+                            $chefiaCD1_CD2 = $ponto->estudanteBool($funcionarios[$j]->n_folha, 2);
+                            if ($chefiaCD1_CD2 != null and ($chefiaCD1_CD2->resposta[0] == 's' | $chefiaCD1_CD2->resposta[0] == 'S'))
+                                continue;
 
-    //recupera as ocorrencias de cada funcionario
-    $ocorrencias = $ponto->ocorrencias($mes, $ano_selecionado, $departamentoSelecionado, $funcionarios[$j]->n_folha);
-
-
-    echo" <table class='table table-bordered' id='ocorrencias' name='ocorrencias'>";
-    echo"  <div class='panel-heading'>";
-    echo("Servidor: <label >{$funcionarios[$j]->nome}</label>");
-    echo("&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp SIAPE: &nbsp&nbsp<label >{$funcionarios[$j]->n_folha}</label>");
-    echo "    </div>";
-    echo"	</table>  ";
+                            //recupera as ocorrencias de cada funcionario
+                            $ocorrencias = $ponto->ocorrencias($mes, $ano_selecionado, $departamentoSelecionado, $funcionarios[$j]->n_folha);
 
 
-    /**
-     *  Caso o  funcionario  apresente  ocorrencias, elas serao  listas
-     *  caso  contrario,  sera exibido  apenas os saldo  de dias, ex:
-     *
-     * Efetivo :25
-     * Faltas:  5
-     */
-    
-
-    // pergunta 1  Servidor estudante 
-    $servidorEstudante = $ponto->estudanteBool($funcionarios[$j]->n_folha,1);
-
-    
+                            echo" <table class='table table-bordered' id='ocorrencias' name='ocorrencias'>";
+                            echo"  <div class='panel-heading'>";
+                            echo("Servidor: <label >{$funcionarios[$j]->nome}</label>");
+                            echo("&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp SIAPE: &nbsp&nbsp<label >{$funcionarios[$j]->n_folha}</label>");
+                            echo "    </div>";
+                            echo"	</table>  ";
 
 
-    if($servidorEstudante != null and  ($servidorEstudante->resposta[0] == 's' | $servidorEstudante->resposta[0] == 'S')){
+                            /**
+                             *  Caso o  funcionario  apresente  ocorrencias, elas serao  listas
+                             *  caso  contrario,  sera exibido  apenas os saldo  de dias, ex:
+                             *
+                             * Efetivo :25
+                             * Faltas:  5
+                             */
+                            // pergunta 1  Servidor estudante 
+                            $servidorEstudante = $ponto->estudanteBool($funcionarios[$j]->n_folha, 1);
 
-        echo "<table border='0'>
+
+
+
+                            if ($servidorEstudante != null and ($servidorEstudante->resposta[0] == 's' | $servidorEstudante->resposta[0] == 'S')) {
+
+                                echo "<table border='0'>
                         <tr>
                             <td width='200px' > <label> Servidor Estudante </label></td>
                           
                         </tr>
 
                     </table> ";
+                            } else {
 
-    }else{   
-   
-        if (count($ocorrencias) > 0) {
+                                if (count($ocorrencias) > 0) {
 
 
-                echo" <table class='table table-bordered' id='ocorrencias' name='ocorrencias'>
+                                    echo" <table class='table table-bordered' id='ocorrencias' name='ocorrencias'>
                     <thead>
                         <th width='80px'>Ocorrência:</th>
                         <th width='300px'>Descrição:</th>
@@ -328,40 +320,40 @@ for ($j = 0; $j < count($funcionarios); $j++) {
                     </thead>
 
                     <tbody>";
-                // Mudar esses parametros ($ponto->ocorrencias(mes,ano,$departamentoId,$funcionarios[$j]->n_folha);
+                                    // Mudar esses parametros ($ponto->ocorrencias(mes,ano,$departamentoId,$funcionarios[$j]->n_folha);
 
 
-                for ($i = 0; $i < count($ocorrencias); $i++) {
-                    echo "<tr>";
-                    echo" <td width='100px'>{$ocorrencias[$i]->ocorrencia}</th>";
-                    echo" <td width='80px'>{$ocorrencias[$i]->descricao}</th>";
-                    echo" <td width='150px'>{$ocorrencias[$i]->quantidade}</th>";
-                    echo" <td width='80px'>";
-                    /**
-                     * [$dias dias em  que ocorreram as ocorrencias]
-                     * @var [type]
-                     *
-                     */
-                    $dias = $ponto->diasOcorrencias($mes, $ano_selecionado, $departamentoSelecionado, $funcionarios[$j]->n_folha, $ocorrencias[$i]->ocorrencia);
+                                    for ($i = 0; $i < count($ocorrencias); $i++) {
+                                        echo "<tr>";
+                                        echo" <td width='100px'>{$ocorrencias[$i]->ocorrencia}</th>";
+                                        echo" <td width='80px'>{$ocorrencias[$i]->descricao}</th>";
+                                        echo" <td width='150px'>{$ocorrencias[$i]->quantidade}</th>";
+                                        echo" <td width='80px'>";
+                                        /**
+                                         * [$dias dias em  que ocorreram as ocorrencias]
+                                         * @var [type]
+                                         *
+                                         */
+                                        $dias = $ponto->diasOcorrencias($mes, $ano_selecionado, $departamentoSelecionado, $funcionarios[$j]->n_folha, $ocorrencias[$i]->ocorrencia);
 
-                    for ($l = 0; $l < count($dias); $l++) {
-                        echo "{$dias[$l]->dia}";
-                        if ((count($dias) - 1) != $l) {
-                            echo "-";
-                        }
-                    }
-                    echo " </th>";
-                    echo "</tr>";
-                }
+                                        for ($l = 0; $l < count($dias); $l++) {
+                                            echo "{$dias[$l]->dia}";
+                                            if ((count($dias) - 1) != $l) {
+                                                echo "-";
+                                            }
+                                        }
+                                        echo " </th>";
+                                        echo "</tr>";
+                                    }
 
-                /**
-                 * [$saldoDias  quantidade de dias trabalhados e  nao trabalhados por  mes]
-                 * @var [array de objetos]
-                 */
-                $saldoDias = $ponto->diasTrabalhados($mes, $ano_selecionado, $departamentoSelecionado, $funcionarios[$j]->n_folha);
+                                    /**
+                                     * [$saldoDias  quantidade de dias trabalhados e  nao trabalhados por  mes]
+                                     * @var [array de objetos]
+                                     */
+                                    $saldoDias = $ponto->diasTrabalhados($mes, $ano_selecionado, $departamentoSelecionado, $funcionarios[$j]->n_folha);
 
-                echo "</tbody>";
-                echo "<table border='0'>
+                                    echo "</tbody>";
+                                    echo "<table border='0'>
                                     <tr>
                                         <td width='200px' > <label> Efetivo: {$saldoDias[0]->trabalhados} </label></td>
                                         <td width='150px' > <label> Afastamento: {$saldoDias[0]->naotrabalhados} </label></td>
@@ -370,25 +362,25 @@ for ($j = 0; $j < count($funcionarios); $j++) {
                                     </tr>
 
                                 </table> </br>";
-        }else {
+                                } else {
 
 
-        echo "<table border='0'>
+                                    echo "<table border='0'>
                         <tr>
                             <td width='200px' > <label> Efetivo: {$diasMes} </label></td>
                             <td width='150px' > <label> Afastamento: 0 </label></td>
                         </tr>
 
                     </table> </br>";
-        }
-    }
-    
+                                }
+                            }
 
-    echo"	<hr align='center'  size='1' >";
-}
 
-echo " </div> ";
-?>
+                            echo"	<hr align='center'  size='1' >";
+                        }
+
+                        echo " </div> ";
+                        ?>
 
 
                         <div  id='obs2'  name='obs2' pbsclass="form-group">
@@ -407,7 +399,5 @@ echo " </div> ";
                         ?></span>
 
         </div>
-
-
     </body>
 </html>

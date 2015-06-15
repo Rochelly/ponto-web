@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 if (!array_key_exists('siape', $_SESSION)) {
     header('location: /ponto/login.php');
@@ -12,7 +13,7 @@ function __autoload($c) {
         './model/',
         './dao/ponto/',
         './view/'
-        );
+    );
 
     foreach ($paths as $dir) {
         if (file_exists($dir . $c . '.php')) {
@@ -25,7 +26,9 @@ $siape = $_SESSION['siape'];
 $ponto = new Ponto;
 $func = substr($_SERVER['PATH_INFO'], 1);
 $args = explode('&', $_SERVER['QUERY_STRING']);
-$args = array_map(function ($item) {return end(explode('=', $item)); }, $args);
+$args = array_map(function ($item) {
+    return end(explode('=', $item));
+}, $args);
 $args = array_merge(array($siape), $args);
 
 $result = call_user_func_array(array($ponto, $func), $args);
