@@ -20,7 +20,7 @@ function __autoload($c) {
         }
     }
 }
-ini_set('default_charset', 'ISO-8859-1');
+//ini_set('default_charset', 'ISO-8859-1');
 $siape = $_SESSION['siape'];
 $usuario = $_SESSION['usuario'];
 
