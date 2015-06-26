@@ -11,7 +11,7 @@ session_start();
  * se nao, redireciona a pagina  de login
  */
 if (!array_key_exists('siape', $_SESSION)) {
-    header('location: /ponto/login.php');
+    header('location: /login.php');
     exit;
 }
 
@@ -104,7 +104,6 @@ if (count($chefiaDepartamento) == 0) {
                         </nav>
                     </div>
 
-
                 </div>
                 <!-- Menu Fim -->
 
@@ -116,7 +115,7 @@ if (count($chefiaDepartamento) == 0) {
                             <?php
                             $meses = array('', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro');
                             $mes = array_key_exists('mes', $_GET) ? $_GET['mes'] : date('n');
-                            var_dump($mes);
+                   
 
                             for ($i = 1; $i < 13; $i++) {
                                 if ($i == $mes)
@@ -247,30 +246,64 @@ if (count($chefiaDepartamento) == 0) {
                         <?php
                         echo"<div class='panel panel-default'>";
                         /**
-                         * [$funcionarios  retorna  o SIAPE de todos os  funcionarios) de um departamento]
-                         * @var [type]
-                         * 	@var [type] [description]
+                         * [$funcionarios  retorna  o nome,SIAPE e data de admissao de todos os  funcionarios de um departamento 
                          */
                         $funcionarios = $ponto->funcionariosDep($departamentoSelecionado);
-
-
                         /**
                          * [$diasMes numero de dias do mes]
                          * @var [int]
                          */
                         $diasMes = cal_days_in_month(CAL_GREGORIAN, $mes, $ano_selecionado);
 
+                        $mesFormatado = $mes;
+                        if($mes<10)
+                             $mesFormatado=  '0'.$mes;
 
-                        /**
-                         * [$j   funcionarios de  um setor]
-                         * @var integer
-                         */
+                      //  $dataAtualUltimoDiaMes   = new DateTime($ano_selecionado.'-'.$mesFormatado.'-'.$diasMes);
+
+                        // funcionarios de  um setor]
                         for ($j = 0; $j < count($funcionarios); $j++) {
 
+                            $diasDescontadosPorAdmissaoOuDemissao = 0;
+                            $data_admissao      = $funcionarios[$j]->data_admissao;//recuperando a data de admissao do  funcionario
+                            $data_admissaoVet   = explode('/', $data_admissao); // data fragmentada pra se  retirar as partes da data
+                            $data_admissao      = str_replace('/', '-', $data_admissao); 
+                            
+                            if ($funcionarios[$j]->data_demissao !=null) {
+                                $data_demissao = $funcionarios[$j]->data_demissao;//recuperando a data de demissao do  funcionario
+                                $data_demissaoVet   = explode('/', $data_demissao); // data fragmentada pra se  retirar as partes da data
+                                $data_demissao = str_replace('/', '-', $data_demissao); 
+                                
+                        
+                                if (strtotime($data_demissao)<strtotime($ano_selecionado.'-'.$mesFormatado.'-'.'01')) {
+                                    continue;
+                                }
+
+                                if ($mesFormatado == $data_demissaoVet[1] && $ano_selecionado == $data_demissaoVet[0] ) { //se  o mes de demissao for o  mesmo do  boletim a ser gerado
+                                    $diasDescontadosPorAdmissaoOuDemissao= $diasMes - $data_demissaoVet[2]; 
+
+                            }
+                            }
+
+                            if( strtotime($data_admissao)>strtotime($ano_selecionado.'-'.$mesFormatado.'-'.$diasMes))
+                                continue;
+
+
                             // verifica  se e cargo  de  direçao
-                            $chefiaCD1_CD2 = $ponto->estudanteBool($funcionarios[$j]->n_folha, 2);
+                            $chefiaCD1_CD2 = $ponto->estudanteBool($funcionarios[$j]->n_folha,2);
                             if ($chefiaCD1_CD2 != null and ($chefiaCD1_CD2->resposta[0] == 's' | $chefiaCD1_CD2->resposta[0] == 'S'))
                                 continue;
+
+                            
+
+
+                            if ($mesFormatado == $data_admissaoVet[1] && $ano_selecionado == $data_admissaoVet[0] ) { //se  o mes de demissao for o  mesmo do  boletim a ser gerado
+                                $diasDescontadosPorAdmissaoOuDemissao= $data_admissaoVet[2]-1;
+                            }
+
+
+
+
 
                             //recupera as ocorrencias de cada funcionario
                             $ocorrencias = $ponto->ocorrencias($mes, $ano_selecionado, $departamentoSelecionado, $funcionarios[$j]->n_folha);
@@ -278,7 +311,7 @@ if (count($chefiaDepartamento) == 0) {
 
                             echo" <table class='table table-bordered' id='ocorrencias' name='ocorrencias'>";
                             echo"  <div class='panel-heading'>";
-                            echo("Servidor: <label >{$funcionarios[$j]->nome}</label>");
+                            echo("Servidor(a): <label >{$funcionarios[$j]->nome}</label>");
                             echo("&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp SIAPE: &nbsp&nbsp<label >{$funcionarios[$j]->n_folha}</label>");
                             echo "    </div>";
                             echo"	</table>  ";
@@ -294,33 +327,44 @@ if (count($chefiaDepartamento) == 0) {
                             // pergunta 1  Servidor estudante 
                             $servidorEstudante = $ponto->estudanteBool($funcionarios[$j]->n_folha, 1);
 
+                            if ($servidorEstudante != null and ($servidorEstudante->resposta[0] == 's' | $servidorEstudante->resposta[0] == 'S')) {
 
+                                echo "<table border='0'>
+                        <tr>
+                            <td width='200px' > <label> Servidor(a) Estudante. </label></td>
+                          
+                        </tr>
 
+                    </table> ";
+                            } 
+
+                            else {
+                                  $servidorEstudante = $ponto->estudanteBool($funcionarios[$j]->n_folha, 3);
 
                             if ($servidorEstudante != null and ($servidorEstudante->resposta[0] == 's' | $servidorEstudante->resposta[0] == 'S')) {
 
                                 echo "<table border='0'>
                         <tr>
-                            <td width='200px' > <label> Servidor Estudante </label></td>
+                            <td width='700px' > <label>Servidor(a) impedido de realizar marcações no sistema REP.</label></td>
                           
                         </tr>
 
                     </table> ";
-                            } else {
-
+                            }
+                                else{
                                 if (count($ocorrencias) > 0) {
 
 
-                                    echo" <table class='table table-bordered' id='ocorrencias' name='ocorrencias'>
-                    <thead>
-                        <th width='80px'>Ocorrência:</th>
-                        <th width='300px'>Descrição:</th>
-                        <th width='200px'>Quantidade:</th>
-                        <th width='300px'>Dias Do Mês:</th>
-                    </thead>
+                                                        echo" <table class='table table-bordered' id='ocorrencias' name='ocorrencias'>
+                                        <thead>
+                                            <th width='80px'>Ocorrência:</th>
+                                            <th width='300px'>Descrição:</th>
+                                            <th width='200px'>Quantidade:</th>
+                                            <th width='300px'>Dias Do Mês:</th>
+                                        </thead>
 
-                    <tbody>";
-                                    // Mudar esses parametros ($ponto->ocorrencias(mes,ano,$departamentoId,$funcionarios[$j]->n_folha);
+                                        <tbody>";
+                                                        // Mudar esses parametros ($ponto->ocorrencias(mes,ano,$departamentoId,$funcionarios[$j]->n_folha);
 
 
                                     for ($i = 0; $i < count($ocorrencias); $i++) {
@@ -352,27 +396,31 @@ if (count($chefiaDepartamento) == 0) {
                                      */
                                     $saldoDias = $ponto->diasTrabalhados($mes, $ano_selecionado, $departamentoSelecionado, $funcionarios[$j]->n_folha);
 
+                                    $diasComDesconto = $saldoDias[0]->trabalhados - $diasDescontadosPorAdmissaoOuDemissao;
                                     echo "</tbody>";
                                     echo "<table border='0'>
                                     <tr>
-                                        <td width='200px' > <label> Efetivo: {$saldoDias[0]->trabalhados} </label></td>
+                                        <td width='200px' > <label> Efetivo: {$diasComDesconto} </label></td>
                                         <td width='150px' > <label> Afastamento: {$saldoDias[0]->naotrabalhados} </label></td>
 
 
                                     </tr>
 
                                 </table> </br>";
+
+
                                 } else {
 
+                                                $diasComDesconto = $diasMes- $diasDescontadosPorAdmissaoOuDemissao;
+                                                                                             echo "<table border='0'>
+                                    <tr>
+                                         <td width='200px' > <label> Efetivo: {$diasComDesconto} </label></td>
+                                        <td width='150px' > <label> Afastamento: 0 </label></td>
+                                    </tr>
 
-                                    echo "<table border='0'>
-                        <tr>
-                            <td width='200px' > <label> Efetivo: {$diasMes} </label></td>
-                            <td width='150px' > <label> Afastamento: 0 </label></td>
-                        </tr>
-
-                    </table> </br>";
+                                </table> </br>";
                                 }
+                            }
                             }
 
 
