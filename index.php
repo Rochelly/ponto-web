@@ -175,7 +175,7 @@ echo "Departamento: <label>{$servidor->descricao}</label>";
                                         <h4 class="panel-title">
                                             <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
                                                 <span class="glyphicon glyphicon-plus"></span>
-                                                Horarios do Servidor
+                                                Horários do Servidor
                                             </a>
                                         </h4>
                                     </div>

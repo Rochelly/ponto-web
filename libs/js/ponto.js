@@ -162,19 +162,20 @@ function diferencaEntreHoras(entrada2 ,saida1 ) {
 // -----------------Componentes Visuais --------------------------------------------------------------------------
 
 function sumario(mes,ano,minutosDescontadosMes,cargaHorariaTotal,minutosTrabalhadosMes,lastDay){
-             /**
-             Período: 01/05/2015 a 31/05/2015
-             Carga Horária: 104:00
-             Horas Trabalhadas: 80:23
-             Extras/Atraso: -79:40
-             Ultima Atualizacao: 20/05/2015 13:15
-             */
+     /**
+     Período: 01/05/2015 a 31/05/2015
+     Carga Horária: 104:00
+     Horas Trabalhadas: 80:23
+     Extras/Atraso: -79:40
+     Ultima Atualizacao: 20/05/2015 13:15
+     */
         mes  = (mes < 10) ? "0" + mes : mes.toString(); //  ex :  mes 3 convertido para 03
         var periodo = '01/'+mes.toString()+"/"+ano.toString()+" - " + lastDay.toString()+"/"+mes.toString()+"/"+ano.toString();
          
         //Preenchendo o sumario
         periodo != undefined ? $("#periodo").text(periodo) : $("#periodo").text("");
         cargaHorariaTotal != undefined ? $("#carga_horaria").text(converteMinutosEmHoras(cargaHorariaTotal)) : $("#carga_horaria").text("");
+      
         minutosTrabalhadosMes  != null ? $("#horas_trabalhadas").text(converteMinutosEmHoras(minutosTrabalhadosMes- minutosDescontadosMes)) : $("#horas_trabalhadas").text("");
         saldoComDesconto =  (minutosTrabalhadosMes - minutosDescontadosMes) - cargaHorariaTotal;
 
@@ -188,7 +189,6 @@ function sumario(mes,ano,minutosDescontadosMes,cargaHorariaTotal,minutosTrabalha
         $("#saldo").removeClass('saldo pos neg');
         if (saldoComDesconto)
             $("#saldo").addClass(saldoComDesconto[0] == '-' ? 'saldo neg' : 'saldo pos');
-
 }
 
 function cabecalhoTabelaMarcacoes(terceiraMarcacao){
@@ -211,7 +211,7 @@ function cabecalhoTabelaMarcacoes(terceiraMarcacao){
 
 function corpoTabelaMarcacoes(mes,ano,batidas, feriados, terceiraMarcacao,horarios) {
 
-    var minutosDescontadosDia = 0;
+    
     var minutosDescontadosMes = 0;
     var cargaHorariaTotalMes  = 0;
     var minutosTrabalhadosMes   = 0;
@@ -240,7 +240,7 @@ function corpoTabelaMarcacoes(mes,ano,batidas, feriados, terceiraMarcacao,horari
              */         
              for (dia = 1, i = 0; dia <= lastDay; dia++) {
 
-
+                var minutosDescontadosDia = 0;
                 var str_mes = (mes < 10) ? "0" + mes : mes;
                 var str_dia = (dia < 10) ? '0' + dia : dia.toString();
                 var datames = str_dia + "/" + str_mes + "/" + ano; // datames: em cada iteraçao recebe  a data de um  dia trabalhado]
@@ -281,12 +281,12 @@ function corpoTabelaMarcacoes(mes,ano,batidas, feriados, terceiraMarcacao,horari
                         if (batidas[i].bentrada1 == null && batidas[i].bentrada2 == null && batidas[i].bentrada3 == null && fimDeSemanaBool == false &&  feriadoBool == false){// verifica se o funcionario faltou e realizao desconto da falta
                             faltaBool = true;
                             tr = trFalta;
-                            minutosDescontadosDia = minutosDescontadosDia + 480;
+                            console.log("Falta");
                         }
                     }
 
                     if (feriadoBool == false && fimDeSemanaBool ==  false && verificaOcorrencia(batidas[i])== false) {
-                       cargaHorariaTotalMes +=  converteHorasEmMinutos(cargaHoraria[dataCorrente.getUTCDay()]); 
+                       cargaHorariaTotalMes +=  converteHorasEmMinutos(cargaHoraria[dataCorrente.getUTCDay()]); //Carga horária até o dia presente
                     }
 
                     tr.append($('<td>', {html: '<center>' + datames}));
@@ -301,8 +301,6 @@ function corpoTabelaMarcacoes(mes,ano,batidas, feriados, terceiraMarcacao,horari
                     else {// hora de almoço correnta
                         tr.append($('<td>', {html: batidas[i].bsaida1 == null ? texto : '<center><span title=' + batidas[i].esaida1 + '>' + batidas[i].bsaida1.replace('_', '') + '</span>'}));
                         tr.append($('<td>', {html: batidas[i].bentrada2 == null ? texto : '<center><span title=' + batidas[i].eentrada2 + '>' + batidas[i].bentrada2.replace('_', '') + '</span>'}));
-                        minutosDescontadosDia = 0;
-                        minutosDescontadosMes += minutosDescontadosDia;
                     }
 
                     tr.append($('<td>', {html: batidas[i].bsaida2 == null ? texto : '<center><span title=' + batidas[i].esaida2 + '>' + batidas[i].bsaida2.replace('_', '') + '</span>'}));
@@ -313,20 +311,20 @@ function corpoTabelaMarcacoes(mes,ano,batidas, feriados, terceiraMarcacao,horari
                     }
 
                     //Coluna de horas Trabalhadas
+                   
                     if (faltaBool){//caso seja identificado falta coloca menos
-                        minutosDescontadosMes += 480;
-                        tr.append($('<td>', {html: texto}));
-                        tr.append($('<td>', {html: '<center><span class="saldo neg"> -8:00</span>'}));
-                        tr.append($('<td>', {html: '<center><span > --:--</span>'}));
                        
+                        tr.append($('<td>', {html: texto}));
+                        tr.append($('<td>', {html: "<center><span class='saldo neg'>-"+cargaHoraria[dataCorrente.getUTCDay()]+"</span>"}));
+                        tr.append($('<td>', {html: '<center><span > --:--</span>'}));
+                        tr = trFolga;
+
                     }else{
                         var minutosTrabalhadosComDesconto = calculaSaldoDiario(batidas[i]) - minutosDescontadosDia ;
-                      
                         minutosTrabalhadosMes += calculaSaldoDiario(batidas[i]);
 
                         if (!verificaOcorrencia(batidas[i]) &&  minutosTrabalhadosComDesconto != 0) {
                             tr.append($('<td>', {html: calculaSaldoDiario(batidas[i]) == null  ? texto : '<center>' + converteMinutosEmHoras(calculaSaldoDiario(batidas[i]))}));
-
                             var saldoMinutos = diferencaEntreHoras(cargaHoraria[dataCorrente.getUTCDay()],converteMinutosEmHoras(minutosTrabalhadosComDesconto))
                             var saldoDiarioEmHoras = converteMinutosEmHoras(saldoMinutos);
 
@@ -337,10 +335,9 @@ function corpoTabelaMarcacoes(mes,ano,batidas, feriados, terceiraMarcacao,horari
                         }
                         else{
                             tr.append($('<td>', {html: texto}));
-                            if(feriadoBool | fimDeSemanaBool)
+                        
                                 tr.append($('<td>', {html: texto}));
-                            else
-                                tr.append($('<td>', {html: texto}));
+
                         }
                         
                         if(batidas[i].bajuste != '0:00'){         
@@ -354,7 +351,6 @@ function corpoTabelaMarcacoes(mes,ano,batidas, feriados, terceiraMarcacao,horari
                             tr.append($('<td>', {html: texto}));
                         }
                 
-
                     }
                     tbody.append(tr);
                     i++;
@@ -364,10 +360,9 @@ function corpoTabelaMarcacoes(mes,ano,batidas, feriados, terceiraMarcacao,horari
                var fimDeSemanaBool = false;
                var feriadoBool     = false;
                var falta           = false;
-
-                     var dataLoop = new Date(ano, mes - 1, dia); //[hoje uma data para dia do mes  para se  comparar se  o dia e sabado ou  domingo ]
-                     var hoje     = new Date(anoAtual, mesAtual - 1, diaAtual); // data de hoje, para se saber se  a data da marcaçao ja passou
-                     var feriado  = feriados.filter(function(item) { return item.data == datames; }); //feriado do  dia se existi
+               var dataLoop = new Date(ano, mes - 1, dia); //[hoje uma data para dia do mes  para se  comparar se  o dia e sabado ou  domingo ]
+               var hoje     = new Date(anoAtual, mesAtual - 1, diaAtual); // data de hoje, para se saber se  a data da marcaçao ja passou
+               var feriado  = feriados.filter(function(item) { return item.data == datames; }); //feriado do  dia se existi
 
                     if (feriado.length) {// caso exista feriado
                         texto = '<center><span class="folga" title="' + feriado[0].descricao + '">Feriado</span></center>';
@@ -388,8 +383,8 @@ function corpoTabelaMarcacoes(mes,ano,batidas, feriados, terceiraMarcacao,horari
                         if (!(fimDeSemanaBool | feriadoBool) && (!((mes == '1' | mes == '2' | mes == '3') && ano == '2015'))) {//                         // description para  descontar nao pode ser feriado ou  fim  de semana e ao mesmo tempo nao desconta nos meses : janeiro, fevereiro, março do ano  de 2015
                             cargaHorariaTotalMes +=  converteHorasEmMinutos(cargaHoraria[dataCorrente.getUTCDay()]); 
                             falta = true;
-                            tr    = trFalta;
-                            minutosDescontadosMes = minutosDescontadosMes + 480;
+                            tr = trFalta;
+                        
                         }
                     }
                         tr.append($('<td>', {html: '<center>' + datames})); // Data
@@ -404,15 +399,13 @@ function corpoTabelaMarcacoes(mes,ano,batidas, feriados, terceiraMarcacao,horari
                         tr.append($('<td>', {html: texto}));                // Horas Trabalhadas
                        
                     if (falta == true){ //se e falta marca com menos -8 horas
-                        tr.append($('<td>', {html: '<center><span class="saldo neg"> -8:00</span>'})); // Saldo
+                        tr.append($('<td>', {html: "<center><span class='saldo neg'>-"+cargaHoraria[dataCorrente.getUTCDay()]+"</span>"}));
                         tr.append($('<td>', {html: texto}));   
                     }
                     else{
                         tr.append($('<td>', {html: texto})); // Saldo
                         tr.append($('<td>', {html: texto}));   
                     }
-
-       
 
                     tbody.append(tr);
                 }
@@ -425,7 +418,7 @@ function corpoTabelaMarcacoes(mes,ano,batidas, feriados, terceiraMarcacao,horari
         function legendaOcorrencias(mes,ano){
             $.get('/ponto/api.php/legendas?mes=' + mes + '&ano=' + ano, function(data, status) {
 
-            console.log(data);
+        
             //Titulo da tabela de legendas
             var caption = $("#legenda  caption");
             caption.html('');
@@ -513,10 +506,6 @@ $(document).ready(function() {
     atualiza();
     efeitoCollapse();
 });
-
-
-
-
 
 //--------------------------------------------------------------------------------------
 
