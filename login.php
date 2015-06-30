@@ -17,9 +17,7 @@ $msg = '';
 if (array_key_exists('login', $_POST)) {
     $usuario = $_POST['login'];
      	
-   /*  $usuario = 'sonia'; */
- //  $usuario = 'donaldo';
-    //$usuario ='flaviana.tavares';
+  
     $conn = new Ldap();
     $result = $conn->search($base_dn, "uid={$_POST['login']}", array('cn', 'employeeNumber'));
 
@@ -40,6 +38,7 @@ if (array_key_exists('login', $_POST)) {
         $_SESSION['siape'] = $entry['employeeNumber'][0];
   
         $_SESSION['usuario'] = $usuario;
+
 
         header('location: /ponto/index.php');
         exit();

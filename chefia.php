@@ -345,7 +345,7 @@ if (count($chefiaDepartamento) == 0) {
 
                                 echo "<table border='0'>
                         <tr>
-                            <td width='700px' > <label>Servidor(a) impedido de realizar marcações no sistema REP.</label></td>
+                            <td width='700px' > <label>Servidor(a) Portador de Deficiência.</label></td>
                           
                         </tr>
 
@@ -401,7 +401,7 @@ if (count($chefiaDepartamento) == 0) {
                                     echo "<table border='0'>
                                     <tr>
                                         <td width='200px' > <label> Efetivo: {$diasComDesconto} </label></td>
-                                        <td width='150px' > <label> Afastamento: {$saldoDias[0]->naotrabalhados} </label></td>
+                                        <td width='200px' > <label> Afastamento/Ocorrência: {$saldoDias[0]->naotrabalhados} </label></td>
 
 
                                     </tr>
@@ -415,7 +415,7 @@ if (count($chefiaDepartamento) == 0) {
                                                                                              echo "<table border='0'>
                                     <tr>
                                          <td width='200px' > <label> Efetivo: {$diasComDesconto} </label></td>
-                                        <td width='150px' > <label> Afastamento: 0 </label></td>
+                                        <td width='200px' > <label> Afastamento/Ocorrência: 0 </label></td>
                                     </tr>
 
                                 </table> </br>";

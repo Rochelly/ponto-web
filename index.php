@@ -245,7 +245,6 @@ for ($i = 0; $i < count($horarios); $i++) {
                             </div>
 <?php
 /* 						$legendas = $ponto->legendas($siape, $mes, $ano_selecionado);
-
   if (count($legendas)) {
   echo "<h2>Legendas</h2>";
   echo "<dl class='panel-body'>\n";
