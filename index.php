@@ -162,13 +162,59 @@ echo "Departamento: <label>{$servidor->descricao}</label>";
                                
 
                                 $update = $ponto->ultima_atualizacao();
-                                echo "<div>Período: <span id='periodo'></span></div>";
-                                echo "<div>Carga Horária: <span id='carga_horaria'></span></div>";
-                                echo "<div>Horas Trabalhadas: <span id='horas_trabalhadas'></span></div>";
-                                echo "<div>Extras/Atraso: <span id='saldo'></span></div>";
-                                echo "<div>Ultima Atualizacao: <span id='saldo'>{$update}</span></div>";
+                                echo" <table class='table table-bordered' id='sumario' name='sumario'>";
+
+                                    echo " <tbody>";
+                                        echo "<tr>";
+
+                                            echo "<td>";
+                                            echo "<div>Período: <span id='periodo'></span></div>";
+                                            echo "<div>Carga Horária Total: <span id='carga_horaria'></span></div>";
+                                            echo "<div>Horas Trabalhadas: <span id='horas_trabalhadas'></span></div>";
+                                            echo "<div>Extras/Atraso: <span id='saldo'></span></div>";
+                                            echo "<div>Ultima Atualizacao: <span id='saldo'>{$update}</span></div>";
+                                            echo "</td>";
+
+                                            echo "<td>";
+                                            echo "<div>Previsão de Saída: <span id='previsao'></span></div>";
+                                            echo "<div>Carga Horária de Hoje: <span id='carga_horaria_dia'></span></div>";
+                                            echo "<div id='compensacao' ></div>";
+
+                                           echo "<div>Tempo Restante: <span id='span_relogio'></span> ";
+
+
+
+                                            echo "</td>";
+
+                                        echo "</tr>";    
+                                    echo " </tbody>";
+
+                                echo "</table>";
+
+
+
                                 ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                             </div>
+
+
                             <div class="panel-group" id="accordion">
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
