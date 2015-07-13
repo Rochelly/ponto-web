@@ -459,7 +459,7 @@ function corpoTabelaMarcacoes(mes, ano, batidas, feriados, terceiraMarcacao, hor
                 html: '<center>' + datames
             }));
             tr.append($('<td>', {
-                html: batidas[i].bentrada1 == null ? texto : '<center><span title=' + batidas[i].eentrada1 + '>' + batidas[i].bentrada1.replace('_', '') + '</span>'
+                html: batidas[i].bentrada1 == null ? texto : '<center><span title="' + batidas[i].eentrada1 + '"">' + batidas[i].bentrada1.replace('_', '') + '</span>'
             }));
             // verificando se  o funcionario fez menos de uma hora de almoço
             if ((batidas[i].bsaida1 != null) && (batidas[i].bentrada2 != null) && (diferencaEntreHoras(batidas[i].bsaida1, batidas[i].bentrada2) < 60)) {
