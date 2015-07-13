@@ -1,10 +1,11 @@
 <?php
+
 /**
  * @author [ESTÊVÃO SAMUEL PROCÓPIO AMARAL]
  * @author [NEWTON KLEBER MACHADO SILVA]
  * @version [1.10]
  */
-require_once('dao/ldap/Ldap.php');
+require_once ('dao/ldap/Ldap.php');
 require_once ('dao/ponto/Ponto.php');
 session_start();
 
@@ -12,45 +13,43 @@ $base_dn = 'dc=ufvjm,dc=edu,dc=br';
 $usuario = '';
 $msg = '';
 
-
-
 if (array_key_exists('login', $_POST)) {
     $usuario = $_POST['login'];
-     	
-  
+    
     $conn = new Ldap();
     $result = $conn->search($base_dn, "uid={$_POST['login']}", array('cn', 'employeeNumber'));
-
+    
     $entry = $result->first();
     $user_dn = $result->entry_dn();
     $user_pw = $_POST['senha'];
-
+    
     /**
-     * Faz o  login e incia a sessao
+     * Faz o login e incia a sessao
      * Informaçoes disponiveis na sessao:
      * $_SESSION['usuarioNome'] --> Nome completo do Usuario (Fonte: Ldap)
-     * $_SESSION['siape']  -> SIAPE do servidor (Fonte: Ldap)
-     * $_SESSION['usuario'] ->  login do usuario (mesmo do E-mail institucional)	
-     **/
+     * $_SESSION['siape'] -> SIAPE do servidor (Fonte: Ldap)
+     * $_SESSION['usuario'] -> login do usuario (mesmo do E-mail institucional)
+     *
+     */
     if ($conn->bind($user_dn, $user_pw)) {
-
+        
         $_SESSION['usuarioNome'] = $entry['cn'][0];
         $_SESSION['siape'] = $entry['employeeNumber'][0];
-    //    $_SESSION['siape'] ="1646975";
-  
+        
+         // $_SESSION['siape'] ="2231173";
+        
         $_SESSION['usuario'] = $usuario;
-     
- //    $_SESSION['usuario'] = 'silvia.canoas';
-
+        
+       // $_SESSION['usuario'] = 'silvia.canoas';
+        
         header('location: /ponto/index.php');
         exit();
-    } else {
+    } 
+    else {
         $msg = 'Usuario ou senha inválido!';
     }
 }
-?>
-<!DOCTYPE html>
-<html lang="en">
+?> <!DOCTYPE html> <html lang="en">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -78,7 +77,8 @@ if (array_key_exists('login', $_POST)) {
                             <div class="control-group">
                                 <label class="control-label" for="login">Login</label>
                                 <div class="controls">
-                                    <input id="login" name="login" type="text" placeholder="" class="form-control input-md" required="" value="<?php echo $usuario; ?>">
+                                    <input id="login" name="login" type="text" placeholder="" class="form-control input-md" required="" value="<?php
+echo $usuario; ?>">
                                 </div>
                             </div>
 
@@ -97,8 +97,7 @@ if (array_key_exists('login', $_POST)) {
                                     <button id="entrar" name="entrar" class="btn btn-default">Entrar</button>
                                 </div>
                             </div>
-                        </fieldset>
-<?php
+                        </fieldset> <?php
 if ($msg) {
     echo "<div style='height:15px;'></div><div class='alert alert-warning' role='alert'>{$msg}</div>";
 }
@@ -107,5 +106,4 @@ if ($msg) {
                 </div>
             </div>
         </form>
-    </body>
-</html>
+    </body> </html>

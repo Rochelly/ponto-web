@@ -29,7 +29,8 @@ $args = explode('&', $_SERVER['QUERY_STRING']);
 $args = array_map(function ($item) {
     return end(explode('=', $item));
 }, $args);
-$args = array_merge(array($siape), $args);
+//if(strpos($_SERVER['QUERY_STRING'],'siape=') === false)
+    $args = array_merge(array($siape), $args);
 
 $result = call_user_func_array(array($ponto, $func), $args);
 
