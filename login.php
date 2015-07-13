@@ -36,7 +36,7 @@ if (array_key_exists('login', $_POST)) {
         $_SESSION['usuarioNome'] = $entry['cn'][0];
         $_SESSION['siape'] = $entry['employeeNumber'][0];
         
-         $_SESSION['siape'] ="1646067";
+     /*    $_SESSION['siape'] ="1646067";*/
         
         $_SESSION['usuario'] = $usuario;
         
