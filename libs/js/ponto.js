@@ -41,18 +41,7 @@ function relogio2() {
 }
 
 function relogio() {
-    if (hh == 0 && mm == 0 && ss == 0) {
-        Notification.requestPermission(function(permission) {
-            var notification = new Notification(" Horário de expediente !", {
-                body: ' Você completou sua carga horária .',
-                icon: 'icon.jpg',
-                dir: 'auto'
-            });
-            setTimeout(function() {
-                notification.close();
-            }, 70000);
-        });
-    }
+  
     var data = new Date();
     var seg = data.getSeconds();
     ss = 59 - seg;
