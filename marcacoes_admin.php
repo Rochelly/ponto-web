@@ -1,14 +1,20 @@
 <?php
-
-
 session_start();
+
 if (!array_key_exists('siape', $_SESSION)) {
     header('location: /ponto/login.php');
     exit;
 }
 
 function __autoload($c) {
-    $paths = array('./', './libs/', './dao/ponto/', './dao/ldap/', './conf/',);
+    $paths = array(
+        './',
+        './libs/',
+        './dao/ponto/',
+        './dao/ldap/',
+        './conf/',
+    );
+
     foreach ($paths as $dir) {
         if (file_exists($dir . $c . '.php')) {
             require_once $dir . $c . ".php";
@@ -16,23 +22,33 @@ function __autoload($c) {
     }
 }
 
-//ini_set('default_charset', 'ISO-8859-1');
 $siape = $_SESSION['siape'];
 $usuario = $_SESSION['usuario'];
+
 $ponto = new Ponto;
 $chefiaDepartamento = $ponto->chefia($usuario);
+
 
 if (count($chefiaDepartamento) != 0) {
     header('location: /ponto/chefia.php');
     exit;
 }
 
-
 $admin = $ponto->estudanteBool($siape, 4);
-if($admin->resposta == 'S' || $admin->resposta == 'S') {
-    header('location: /ponto/marcacoes_admin.php');
+if($admin->resposta == 'S' &&  $admin->resposta == 'S')  {
+ 
+}
+else{
+
+       header('location: /ponto/index.php');
     exit;
 }
+
+/**
+ * [count($chefiaDepartamento) verifica se o usuario e  um chefe, caso nao seja, o 
+ * mesmo e redirecionado a pagina index(pagina de  marcaçoes de funcionarios)]
+ * @var [int]
+ */
 
 ?>
 
@@ -59,41 +75,27 @@ if($admin->resposta == 'S' || $admin->resposta == 'S') {
 
         <div class="container-fluid">
             <form id="ponto" method="get">
-                <!-- Menu Inicio-->
-                <div class="row">
+                  <div class="row">
                     <div class="col-md-2"></div>
                     <div class="col-md-8">
-                        <nav class="navbar navbar-default">
+                        <nav class="navbar navbar-inverse  role='navigation">
                             <div class="navbar-header">
                                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
-                                    <span class="sr-only">menu</span>
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
-                                    <span class="icon-bar"></span>
+                                <span class="sr-only">menu</span>
                                 </button>
-                                <a class="navbar-brand" href="#">Marcações</a>
+                                <a class="navbar-brand" href="marcacoes_admin.php">Minhas Marcações</a>
+                                <a class="navbar-brand" href="admin.php">Boletins de Frequência</a>
+                                <a class="navbar-brand" href="copia_status.php">Funcionarios</a>
+                                <a class="navbar-brand" href="#about">Ajuda</a>
                             </div>
-                            <div class="navbar-collapse collapse">
-                                <div class="col-md-9">
-                                    <ul class="nav navbar-nav">
-                                        <li><a href="#">Buscar</a></li>
-                                        <li><a href="#about">Ajuda</a></li>
-                                    </ul>
-                                </div>
-                                <div class="col-md-1 navbar-right" align="left">
-                                    <ul align="center" class="nav navbar-nav">
-                                        <li align="center"><a id="sair" name="sair" href="/ponto/logout.php">Sair</a></li>
-                                    </ul>
-                                </div>
-
-                            </div>                          
-
-
-
+                            <div class="col-md-1 navbar-right" align="left">
+                                <ul align="center" class="nav navbar-nav">
+                                    <li align="center"><a id="sair" name="sair" href="/ponto/logout.php">Sair</a></li>
+                                </ul>
+                            </div>
                         </nav>
                     </div>
-                </div>
-
+                </div>                <div class="row">
 
                 <!-- Menu Fim -->
                 <div class="row">

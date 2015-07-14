@@ -5,7 +5,6 @@
  * @version [1.10]
  */
 //-----------------Calculos envolvendo Horas ---------------------------------------------------------------------
-
 var hh;
 var mm;
 var ss;
@@ -14,9 +13,6 @@ function relogio2() {
     var data = new Date();
     var seg = data.getSeconds();
     ss = seg;
-
-
-
     if (ss == 0) {
         mm = mm + 1;
         if (mm >= 59) {
@@ -24,47 +20,42 @@ function relogio2() {
             hh += 1;
         }
     }
-
     if (hh <= 9) {
         xhh = "0" + hh;
     } else {
         xhh = hh;
     }
-
-
     if (mm <= 9) {
         xmm = "0" + mm;
     } else {
         xmm = mm;
     }
-
-
     if (ss <= 9) {
         xss = "0" + ss;
     } else {
         xss = ss;
     }
-
     if (hh == 0 && mm == 0) xss = '00';
-
     document.all("span_relogio").innerHTML = "+" + xhh + ":" + xmm + ":" + xss;
     lrelogio = setTimeout("relogio2()", 1000);
 }
 
 function relogio() {
-
-
-    if(hh == 0 && mm == 0 && ss == 0){
-      Notification.requestPermission(function(permission){
-                    var notification = new Notification(" Horário de expediente !",{body:' Você completou sua carga horária .',icon:'icon.jpg',dir:'auto'});
-                    setTimeout(function(){  notification.close();   },70000);
-                });
+    if (hh == 0 && mm == 0 && ss == 0) {
+        Notification.requestPermission(function(permission) {
+            var notification = new Notification(" Horário de expediente !", {
+                body: ' Você completou sua carga horária .',
+                icon: 'icon.jpg',
+                dir: 'auto'
+            });
+            setTimeout(function() {
+                notification.close();
+            }, 70000);
+        });
     }
-              
     var data = new Date();
     var seg = data.getSeconds();
     ss = 59 - seg;
-
     if (ss <= 0) {
         mm = mm - 1;
         if (mm <= 0 && hh <= 0) {
@@ -80,29 +71,23 @@ function relogio() {
             }
         }
     }
-
     if (hh <= 9) {
         xhh = "0" + hh;
     } else {
         xhh = hh;
     }
-
     if (mm <= 9) {
         xmm = "0" + mm;
     } else {
         xmm = mm;
     }
-
     if (ss <= 9) {
         xss = "0" + ss;
     } else {
         xss = ss;
     }
-
     if (hh == 0 && mm == 0) xss = '00';
-
     if (ss <= 0 || ss == 60) xss = '00';
-
     document.all("span_relogio").innerHTML = xhh + ":" + xmm + ":" + xss;
     lrelogio = setTimeout("relogio()", 1000);
 }
@@ -143,13 +128,10 @@ function calculoCargaHoraria(horarios) {
     var horasDiarias = [];
     var horasSemanais = 0;
     for (var i = 0; i < horarios.length; i++) { /**[if description] verifica se existe horarios nesse dia da semana*/
-
         var periodo1 = diferencaEntreHoras(horarios[i].entrada1.toString(), horarios[i].saida1.toString());
-
         if (horarios[i].entrada2 != null) {
             var periodo2 = diferencaEntreHoras(horarios[i].entrada2.toString(), horarios[i].saida2.toString());
         }
-
         /*[if description] confere se existe a terceira entrada neste dia da semana*/
         if (horarios[i].entrada3 != null) var periodo3 = diferencaEntreHoras(horarios[i].entrada3.toString(), horarios[i].saida3.toString()); /*[if description] calculo da carga horaria Diaria*/
         if (periodo3 != undefined) horasDiarias[horarios[i].dia_semana] = converteMinutosEmHoras(periodo1 + periodo2 + periodo3);
@@ -167,7 +149,6 @@ function calculoCargaHoraria(horarios) {
 }
 
 function calculaSaldoDiario(marcacao) {
-
     if (marcacao.bentrada1 == null | marcacao.bsaida1 == null) {
         var periodo1 = 0;
     } else {
@@ -177,7 +158,6 @@ function calculaSaldoDiario(marcacao) {
             var periodo1 = diferencaEntreHoras(marcacao.bentrada1, marcacao.bsaida1)
         }
     }
-
     if (marcacao.bentrada2 == null | marcacao.bsaida2 == null) {
         var periodo2 = 0;
     } else {
@@ -187,7 +167,6 @@ function calculaSaldoDiario(marcacao) {
             var periodo2 = diferencaEntreHoras(marcacao.bentrada2, marcacao.bsaida2)
         }
     }
-
     if (marcacao.bentrada3 == null | marcacao.bsaida3 == null) {
         var periodo3 = 0;
     } else {
@@ -196,26 +175,18 @@ function calculaSaldoDiario(marcacao) {
         } else {
             var periodo3 = diferencaEntreHoras(marcacao.bentrada3, marcacao.bsaida3)
         }
-
     }
-
     var saldoDiario = (periodo1 + periodo2 + periodo3);
-
     return saldoDiario;
 }
 
 function verificaOcorrencia(marcacao) {
     if (marcacao.bentrada1 != null && marcacao.bsaida1 != null)
         if (marcacao.bentrada1[0] == '*' | marcacao.bsaida1[0] == '*') return true;
-
-
     if (marcacao.bentrada2 != null && marcacao.bsaida2 != null)
         if (marcacao.bentrada2[0] == '*' | marcacao.bsaida2[0] == '*') return true;
-
-
     if (marcacao.bentrada3 != null && marcacao.bsaida3 != null)
         if (marcacao.bentrada3[0] == '*' | marcacao.bsaida3[0] == '*') return true;
-
     return false;
 }
 
@@ -224,38 +195,28 @@ function diferencaEntreHoras(entrada2, saida1) {
     var entradaTempo = converteHorasEmMinutos(entrada2);
     // entradaTempo = [entrada1 convertida  em minutos]
     var saidaTempo = converteHorasEmMinutos(saida1);
-
     resultado = (parseInt(saidaTempo, 10) - parseInt(entradaTempo, 10));
-
     // retorna a Diferença entre os dois horarios da entrada convertido em minutos
     return resultado
 }
-
 // -----------------Componentes Visuais --------------------------------------------------------------------------
-
 function sumario(mes, ano, minutosDescontadosMes, cargaHorariaTotal, minutosTrabalhadosMes, lastDay, horarios, batidaHoje, diaSemana) {
-
     //--Primeira Coluna  do Sumário --------------------------------------------------------------------------------------------
     mes = (mes < 10) ? "0" + mes : mes.toString(); //  ex :  mes 3 convertido para 03
     var periodo = '01/' + mes.toString() + "/" + ano.toString() + " - " + lastDay.toString() + "/" + mes.toString() + "/" + ano.toString();
-
     //Preenchendo o sumario
     periodo != undefined ? $("#periodo").text(periodo) : $("#periodo").text("");
     cargaHorariaTotal != undefined ? $("#carga_horaria").text(converteMinutosEmHoras(cargaHorariaTotal)) : $("#carga_horaria").text("");
-
     minutosTrabalhadosMes != null ? $("#horas_trabalhadas").text(converteMinutosEmHoras(minutosTrabalhadosMes - minutosDescontadosMes)) : $("#horas_trabalhadas").text("");
     saldoComDesconto = (minutosTrabalhadosMes - minutosDescontadosMes) - cargaHorariaTotal;
-
     if (converteMinutosEmHoras(cargaHorariaTotal) == '0:00') {
         alert('Não consta nenhuma marcação neste mês!');
     }
-
     //realiza o desconto de dias  nao  trabalhados e minutos a menos na horas do almoço
     saldoComDesconto = converteMinutosEmHoras(saldoComDesconto);
     saldoComDesconto != null ? $("#saldo").text(saldoComDesconto) : $("#saldo").text("");
     $("#saldo").removeClass('saldo pos neg');
     if (saldoComDesconto) $("#saldo").addClass(saldoComDesconto[0] == '-' ? 'saldo neg' : 'saldo pos');
-
     //--Segunda Coluna  do Sumário --------------------------------------------------------------------------------------------
     diaSemana -= 1;
     //console.log(horarios[diaSemana]);
@@ -272,19 +233,14 @@ function sumario(mes, ano, minutosDescontadosMes, cargaHorariaTotal, minutosTrab
         //console.log('Previsão',previsaoSaida);
         $("#previsao").text(previsaoSaida);
     }
-
-
     if (batidaHoje.bentrada2 != null && batidaHoje.saida2 == null) {
         var previsaoSaida = converteMinutosEmHoras(converteHorasEmMinutos(batidaHoje.bentrada1) + cargaHorariaPrimeiroPeriodo + cargaHorariaSegundoPeriodo + diferencaEntreHoras(batidaHoje.bsaida1, batidaHoje.bentrada2));
         //console.log('Previsão',previsaoSaida);
         $("#previsao").text(previsaoSaida);
     }
-
     var cargaHorariaDia = cargaHorariaSegundoPeriodo == undefined ? converteMinutosEmHoras(cargaHorariaPrimeiroPeriodo) : converteMinutosEmHoras(cargaHorariaPrimeiroPeriodo + cargaHorariaSegundoPeriodo);
     $("#carga_horaria_dia").text(cargaHorariaDia);
-
     var acressimoConpesacao = 0;
-
     if (saldoComDesconto[0] == '-') {
         var saldoEmMinutos = converteHorasEmMinutos(saldoComDesconto);
         if (saldoEmMinutos < -120) {
@@ -293,14 +249,19 @@ function sumario(mes, ano, minutosDescontadosMes, cargaHorariaTotal, minutosTrab
     } else {
         acressimoConpesacao = saldoMinutos * -1;
     }
-
-    if (calculaSaldoDiario(batidaHoje) - converteHorasEmMinutos(saldoComDesconto) == converteHorasEmMinutos(cargaHorariaDia)) acressimoConpesacao = 0;
-    else acressimoConpesacao = calculaSaldoDiario(batidaHoje) - converteHorasEmMinutos(saldoComDesconto) - converteHorasEmMinutos(cargaHorariaDia);
-
+    if (calculaSaldoDiario(batidaHoje) - converteHorasEmMinutos(saldoComDesconto) == converteHorasEmMinutos(cargaHorariaDia)) 
+        acressimoConpesacao = 0;
+    else 
+        acressimoConpesacao = calculaSaldoDiario(batidaHoje) - converteHorasEmMinutos(saldoComDesconto) - converteHorasEmMinutos(cargaHorariaDia);
     if (batidaHoje.bentrada2 != null) {
-        if (acressimoConpesacao != 0) $("#compensacao").html("Saída Para Compensação: <span>" + converteMinutosEmHoras(converteHorasEmMinutos(previsaoSaida) + acressimoConpesacao) + "</span>");
-    }
+        if (acressimoConpesacao != 0){
+            if (acressimoConpesacao > 120) {
+                acressimoConpesacao = 120;
+            };
 
+            $("#compensacao").html("Saída Para Compensação: <span>" + converteMinutosEmHoras(converteHorasEmMinutos(previsaoSaida) + acressimoConpesacao) + "</span>");
+        }
+    }
     var data = new Date();
     var dia = data.getDate(); // 1-31
     var dia_sem = data.getDay(); // 0-6 (zero=domingo)
@@ -313,11 +274,8 @@ function sumario(mes, ano, minutosDescontadosMes, cargaHorariaTotal, minutosTrab
     var mseg = data.getMilliseconds(); // 0-999
     var tz = data.getTimezoneOffset(); // em minutos
     if (hora < 10) hora = '0' + hora;
-
     var horaAgora = hora + ":" + min;
-
     tempoRestante = converteMinutosEmHoras(diferencaEntreHoras(horaAgora, previsaoSaida));
-
     if (diferencaEntreHoras(horaAgora, previsaoSaida) >= 0) {
         tempoRestante = tempoRestante.split(":");
         hh = parseInt(tempoRestante[0], 10);
@@ -372,20 +330,13 @@ function cabecalhoTabelaMarcacoes(terceiraMarcacao) {
 }
 
 function corpoTabelaMarcacoes(mes, ano, batidas, feriados, terceiraMarcacao, horarios) {
-
-
     var minutosDescontadosMes = 0;
     var cargaHorariaTotalMes = 0;
     var minutosTrabalhadosMes = 0;
     var cargaHoraria = calculoCargaHoraria(horarios);
-
-
     var tbody = $('#marcacao tbody');
     tbody.html('');
-
-    cabecalhoTabelaMarcacoes(terceiraMarcacao);
-
-    { // dataAtual: Recupera  a de  hoje para highlighted do dia
+    cabecalhoTabelaMarcacoes(terceiraMarcacao); { // dataAtual: Recupera  a de  hoje para highlighted do dia
         dataAtual = new Date();
         diaAtual = dataAtual.getDate(); // dia de hoje
         mesAtual = dataAtual.getMonth() + 1; // mes de hoje
@@ -401,7 +352,6 @@ function corpoTabelaMarcacoes(mes, ano, batidas, feriados, terceiraMarcacao, hor
      * @param  {int} lastDay  [lastDay :  numero de quantidade de  dias do mes selecionado]
      */
     for (dia = 1, i = 0; dia <= lastDay; dia++) {
-
         var minutosDescontadosDia = 0;
         var str_mes = (mes < 10) ? "0" + mes : mes;
         var str_dia = (dia < 10) ? '0' + dia : dia.toString();
@@ -413,12 +363,9 @@ function corpoTabelaMarcacoes(mes, ano, batidas, feriados, terceiraMarcacao, hor
         if (datames == dataAtual) { //if highlighted para o  dia de  hoje]
             tr = trHoje;
         }
-
         if (i < batidas.length && batidas[i].bdata == datames) { // [if adicona somente as  batidas ate o  dia atual]
             if (datames == dataAtual) //if highlighted para o  dia de  hoje]
                 var batidaHoje = batidas[i];
-
-
             var faltaBool = false;
             var fimDeSemanaBool = false;
             var feriadoBool = false;
@@ -426,9 +373,7 @@ function corpoTabelaMarcacoes(mes, ano, batidas, feriados, terceiraMarcacao, hor
             var dataCorrente = new Date(ano, mes - 1, dia); // dataCorrente: a data corrente no loop
             var feriado = feriados.filter(function(item) {
                 return item.data == datames;
-            });
-
-            { //verifica se o dia o dia e feriado ou  fim de semana
+            }); { //verifica se o dia o dia e feriado ou  fim de semana
                 if (feriado.length) { //verifica se existe feriado nesse dia
                     texto = '<center><span class="folga" title="' + feriado[0].descricao + '">Feriado</span></center>';
                     tr = trFolga;
@@ -450,11 +395,9 @@ function corpoTabelaMarcacoes(mes, ano, batidas, feriados, terceiraMarcacao, hor
                     //console.log("Falta");
                 }
             }
-
             if (feriadoBool == false && fimDeSemanaBool == false && verificaOcorrencia(batidas[i]) == false) {
                 cargaHorariaTotalMes += converteHorasEmMinutos(cargaHoraria[dataCorrente.getUTCDay()]); //Carga horária até o dia presente
             }
-
             tr.append($('<td>', {
                 html: '<center>' + datames
             }));
@@ -479,11 +422,9 @@ function corpoTabelaMarcacoes(mes, ano, batidas, feriados, terceiraMarcacao, hor
                     html: batidas[i].bentrada2 == null ? texto : '<center><span title="' + batidas[i].eentrada2 + '"">' + batidas[i].bentrada2.replace('_', '') + '</span>'
                 }));
             }
-
             tr.append($('<td>', {
                 html: batidas[i].bsaida2 == null ? texto : '<center><span title="' + batidas[i].esaida2 + '"">' + batidas[i].bsaida2.replace('_', '') + '</span>'
             }));
-
             if (terceiraMarcacao.quantidade > 0) { //[if confere se o funcionario possui uma  terceira marcaçao de ponto no mes]
                 tr.append($('<td>', {
                     html: batidas[i].bentrada3 == null ? texto : '<center><span title="' + batidas[i].eentrada2 + '"">' + batidas[i].bentrada3.replace('_', '') + '</span>'
@@ -492,7 +433,6 @@ function corpoTabelaMarcacoes(mes, ano, batidas, feriados, terceiraMarcacao, hor
                     html: batidas[i].bsaida3 == null ? texto : '<center><span title="' + batidas[i].esaida2 + '"">' + batidas[i].bsaida3.replace('_', '') + '</span>'
                 }));
             }
-
             //Coluna de horas Trabalhadas
             if (faltaBool) { //caso seja identificado falta coloca menos
                 tr.append($('<td>', {
@@ -505,18 +445,15 @@ function corpoTabelaMarcacoes(mes, ano, batidas, feriados, terceiraMarcacao, hor
                     html: '<center><span > --:--</span>'
                 }));
                 tr = trFolga;
-
             } else {
                 var minutosTrabalhadosComDesconto = calculaSaldoDiario(batidas[i]) - minutosDescontadosDia;
                 minutosTrabalhadosMes += calculaSaldoDiario(batidas[i]);
-
                 if (!verificaOcorrencia(batidas[i]) && minutosTrabalhadosComDesconto != 0) {
                     tr.append($('<td>', {
                         html: calculaSaldoDiario(batidas[i]) == null ? texto : '<center>' + converteMinutosEmHoras(calculaSaldoDiario(batidas[i]))
                     }));
                     var saldoMinutos = diferencaEntreHoras(cargaHoraria[dataCorrente.getUTCDay()], converteMinutosEmHoras(minutosTrabalhadosComDesconto))
                     var saldoDiarioEmHoras = converteMinutosEmHoras(saldoMinutos);
-
                     if (saldoDiarioEmHoras[0] == "-") tr.append($('<td>', {
                         html: '<center><span class="saldo neg">' + saldoDiarioEmHoras + '</span>'
                     }));
@@ -527,13 +464,10 @@ function corpoTabelaMarcacoes(mes, ano, batidas, feriados, terceiraMarcacao, hor
                     tr.append($('<td>', {
                         html: texto
                     }));
-
                     tr.append($('<td>', {
                         html: texto
                     }));
-
                 }
-
                 if (batidas[i].bajuste != '0:00') {
                     minutosDescontadosMes -= converteHorasEmMinutos(batidas[i].bajuste);
                     if (batidas[i].bajuste[0] == '-') tr.append($('<td>', {
@@ -547,7 +481,6 @@ function corpoTabelaMarcacoes(mes, ano, batidas, feriados, terceiraMarcacao, hor
                         html: texto
                     }));
                 }
-
             }
             tbody.append(tr);
             i++;
@@ -581,7 +514,6 @@ function corpoTabelaMarcacoes(mes, ano, batidas, feriados, terceiraMarcacao, hor
                     cargaHorariaTotalMes += converteHorasEmMinutos(cargaHoraria[dataCorrente.getUTCDay()]);
                     falta = true;
                     tr = trFalta;
-
                 }
             }
             tr.append($('<td>', {
@@ -625,7 +557,6 @@ function corpoTabelaMarcacoes(mes, ano, batidas, feriados, terceiraMarcacao, hor
                     html: texto
                 }));
             }
-
             tbody.append(tr);
         }
     } //  fim do loop que lista as  marcaçoes
@@ -634,8 +565,6 @@ function corpoTabelaMarcacoes(mes, ano, batidas, feriados, terceiraMarcacao, hor
 
 function legendaOcorrencias(mes, ano) {
     $.get('/ponto/api.php/legendas?mes=' + mes + '&ano=' + ano, function(data, status) {
-
-
         //Titulo da tabela de legendas
         var caption = $("#legenda  caption");
         caption.html('');
@@ -675,20 +604,15 @@ function efeitoCollapse() {
     }).on('hidden.bs.collapse', function() {
         $(this).parent().find(".glyphicon-minus").removeClass("glyphicon-minus").addClass("glyphicon-plus");
     });
-
     $('#imprimir').click(function(event) {
         event.preventDefault();
         var observacao = $('#obs').val(); /*      $('#obs2').val(observacao);*/
         $("#obs2").html("<pre><p >" + observacao + "</p></pre>");
         window.print();
-
         return false;
     });
-
 }
-
 //----------------------------------------------------------------------------------------------------------------
-
 function get_dados_mes(mes, ano, callback) {
     $.get('/ponto/api.php/pontos?mes=' + mes + '&ano=' + ano, function(data, status) {
         /* [batidas contem a  data da batida, entradas(1,2,3), saidas(1,2,3),
@@ -721,11 +645,9 @@ function atualiza(e) {
     legendaOcorrencias(mes, ano);
     get_dados_mes(mes, ano, corpoTabelaMarcacoes);
 }
-
 $(document).ready(function() {
     $('#mes').change(atualiza);
     atualiza();
     efeitoCollapse();
 });
-
 //----------------------------------------------------------------------------------------------------------------

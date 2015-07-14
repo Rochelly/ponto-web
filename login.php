@@ -36,11 +36,11 @@ if (array_key_exists('login', $_POST)) {
         $_SESSION['usuarioNome'] = $entry['cn'][0];
         $_SESSION['siape'] = $entry['employeeNumber'][0];
         
-     /*    $_SESSION['siape'] ="1646067";*/
+       //  $_SESSION['siape'] ="390111";
         
         $_SESSION['usuario'] = $usuario;
         
-       // $_SESSION['usuario'] = 'silvia.canoas';
+      // $_SESSION['usuario'] = 'arfonseca';
         
         header('location: /ponto/index.php');
         exit();

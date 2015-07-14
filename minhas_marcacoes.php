@@ -33,10 +33,16 @@ $chefiaDepartamento = $ponto->chefia($usuario);
  * mesmo e redirecionado a pagina index(pagina de  marcaçoes de funcionarios)]
  * @var [int]
  */
-if (count($chefiaDepartamento) == 0) {
-    header('location: /ponto/index.php');
+
+
+$admin = $ponto->estudanteBool($siape, 4);
+if($admin->resposta == 'S' &&  $admin->resposta == 'S')  {
+
+}else{
+        header('location: /ponto/index.php');
     exit;
 }
+
 ?>
 
 <!DOCTYPE html>
