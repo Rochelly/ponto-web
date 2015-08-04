@@ -40,7 +40,7 @@ if (array_key_exists('login', $_POST)) {
         
         $_SESSION['usuario'] = $usuario;
         
-      // $_SESSION['usuario'] = 'arfonseca';
+      /*$_SESSION['usuario'] = 'arfonseca';*/
         
         header('location: /ponto/index.php');
         exit();

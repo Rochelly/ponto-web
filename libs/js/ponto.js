@@ -41,7 +41,6 @@ function relogio2() {
 }
 
 function relogio() {
-  
     var data = new Date();
     var seg = data.getSeconds();
     ss = 59 - seg;
@@ -217,6 +216,7 @@ function sumario(mes, ano, minutosDescontadosMes, cargaHorariaTotal, minutosTrab
     }
     var minutosAlmoco = diferencaEntreHoras(horarios[diaSemana].saida1, horarios[diaSemana].entrada2);
     //console.log("Almoco",minutosAlmoco);   
+
     if (batidaHoje.bentrada1 != null && batidaHoje.bentrada2 == null) {
         var previsaoSaida = converteMinutosEmHoras(converteHorasEmMinutos(batidaHoje.bentrada1) + cargaHorariaPrimeiroPeriodo);
         //console.log('Previsão',previsaoSaida);
@@ -238,16 +238,13 @@ function sumario(mes, ano, minutosDescontadosMes, cargaHorariaTotal, minutosTrab
     } else {
         acressimoConpesacao = saldoMinutos * -1;
     }
-    if (calculaSaldoDiario(batidaHoje) - converteHorasEmMinutos(saldoComDesconto) == converteHorasEmMinutos(cargaHorariaDia)) 
-        acressimoConpesacao = 0;
-    else 
-        acressimoConpesacao = calculaSaldoDiario(batidaHoje) - converteHorasEmMinutos(saldoComDesconto) - converteHorasEmMinutos(cargaHorariaDia);
+    if (calculaSaldoDiario(batidaHoje) - converteHorasEmMinutos(saldoComDesconto) == converteHorasEmMinutos(cargaHorariaDia)) acressimoConpesacao = 0;
+    else acressimoConpesacao = calculaSaldoDiario(batidaHoje) - converteHorasEmMinutos(saldoComDesconto) - converteHorasEmMinutos(cargaHorariaDia);
     if (batidaHoje.bentrada2 != null) {
-        if (acressimoConpesacao != 0){
+        if (acressimoConpesacao != 0) {
             if (acressimoConpesacao > 120) {
                 acressimoConpesacao = 120;
             };
-
             $("#compensacao").html("Saída Para Compensação: <span>" + converteMinutosEmHoras(converteHorasEmMinutos(previsaoSaida) + acressimoConpesacao) + "</span>");
         }
     }
@@ -319,6 +316,8 @@ function cabecalhoTabelaMarcacoes(terceiraMarcacao) {
 }
 
 function corpoTabelaMarcacoes(mes, ano, batidas, feriados, terceiraMarcacao, horarios) {
+
+    console.log(batidas);
     var minutosDescontadosMes = 0;
     var cargaHorariaTotalMes = 0;
     var minutosTrabalhadosMes = 0;
@@ -355,6 +354,7 @@ function corpoTabelaMarcacoes(mes, ano, batidas, feriados, terceiraMarcacao, hor
         if (i < batidas.length && batidas[i].bdata == datames) { // [if adicona somente as  batidas ate o  dia atual]
             if (datames == dataAtual) //if highlighted para o  dia de  hoje]
                 var batidaHoje = batidas[i];
+            console.log('batida,hoje',batidaHoje);
             var faltaBool = false;
             var fimDeSemanaBool = false;
             var feriadoBool = false;
@@ -499,8 +499,11 @@ function corpoTabelaMarcacoes(mes, ano, batidas, feriados, terceiraMarcacao, hor
                 fimDeSemanaBool = true;
             }
             if (hoje > dataLoop) { // [if   se  a  data  que esta no loop for  menor que a data de hoje entao  a marcao  dever  ser debitada
-                if (!(fimDeSemanaBool | feriadoBool) && (!((mes == '1' | mes == '2' | mes == '3') && ano == '2015'))) { //                         // description para  descontar nao pode ser feriado ou  fim  de semana e ao mesmo tempo nao desconta nos meses : janeiro, fevereiro, março do ano  de 2015
-                    cargaHorariaTotalMes += converteHorasEmMinutos(cargaHoraria[dataCorrente.getUTCDay()]);
+                if (!(fimDeSemanaBool | feriadoBool) && (!((mes == '1' | mes == '2' | mes == '3') && ano == '2015'))) { //    
+
+                  // description para  descontar nao pode ser feriado ou  fim  de semana e ao mesmo tempo nao desconta nos meses : janeiro, fevereiro, março do ano  de 2015
+
+                    cargaHorariaTotalMes += converteHorasEmMinutos(cargaHoraria[dataLoop.getUTCDay()]);
                     falta = true;
                     tr = trFalta;
                 }
@@ -533,7 +536,7 @@ function corpoTabelaMarcacoes(mes, ano, batidas, feriados, terceiraMarcacao, hor
             })); // Horas Trabalhadas
             if (falta == true) { //se e falta marca com menos -8 horas
                 tr.append($('<td>', {
-                    html: "<center><span class='saldo neg'>-" + cargaHoraria[dataCorrente.getUTCDay()] + "</span>"
+                    html: "<center><span class='saldo neg'>-" + cargaHoraria[dataLoop.getUTCDay()] + "</span>"
                 }));
                 tr.append($('<td>', {
                     html: texto
@@ -549,7 +552,7 @@ function corpoTabelaMarcacoes(mes, ano, batidas, feriados, terceiraMarcacao, hor
             tbody.append(tr);
         }
     } //  fim do loop que lista as  marcaçoes
-    sumario(mes, ano, minutosDescontadosMes, cargaHorariaTotalMes, minutosTrabalhadosMes, lastDay, horarios, batidaHoje, dataCorrente.getUTCDay()); // cria o sumario
+   sumario(mes, ano, minutosDescontadosMes, cargaHorariaTotalMes, minutosTrabalhadosMes, lastDay, horarios, batidaHoje, dataLoop.getUTCDay()); // cria o sumario
 }
 
 function legendaOcorrencias(mes, ano) {
@@ -607,6 +610,7 @@ function get_dados_mes(mes, ano, callback) {
         /* [batidas contem a  data da batida, entradas(1,2,3), saidas(1,2,3),
          *dia  da semana(1 a 7), carga_horaria, locais das marcaçoes,minutos trabalhados]*/
         var batidas = data;
+
         $.get('/ponto/api.php/feriados?mes=' + mes + '&ano=' + ano, function(data, status) {
             /**[feriados  apresenta as senguintes informaçoes  (exemplo):
              * data: "01/05/2015"
@@ -638,5 +642,6 @@ $(document).ready(function() {
     $('#mes').change(atualiza);
     atualiza();
     efeitoCollapse();
+    $('#login').focus();
 });
 //----------------------------------------------------------------------------------------------------------------
